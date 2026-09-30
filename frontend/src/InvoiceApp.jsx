@@ -51,7 +51,7 @@ export default function InvoiceApp() {
   const [currency, setCurrency] = useState(() => loadLS(STORAGE_KEYS.currency, "DZD"));
   const [templateId, setTemplateId] = useState(() => loadLS(STORAGE_KEYS.template, "classic"));
   const [profile, setProfile] = useState(() => loadLS(STORAGE_KEYS.profile, DEFAULT_PROFILE));
-  const [invoice, setInvoice] = useState(() => loadLS(STORAGE_KEYS.invoice, makeDefaultInvoice()));
+  const [invoice, setInvoice] = useState(() => loadLS(STORAGE_KEYS.invoice, makeEmptyInvoice()));
   const [history, setHistory] = useState(() => loadLS(STORAGE_KEYS.history, []));
   const [historyOpen, setHistoryOpen] = useState(false);
 
