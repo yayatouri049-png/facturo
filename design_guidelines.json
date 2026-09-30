@@ -1,0 +1,94 @@
+{
+  "project_title": "FacturaFlow - Modern SPA Invoice Generator",
+  "archetype": "Luxury Tech & Precision Financial Tool",
+  "theme": {
+    "default_mode": "dark",
+    "theme_description": "Dark luxury base (#0b0d14 / #121520) with high-value accents in royal violet (#7c3aed), electric cyan/blue (#0098f2), and warm champagne gold (#d4af37). The right-side A4 document preview remains authentic accounting style with a clean crisp white background (#ffffff), subtle elevation shadow, and crisp dark typography for official printing clarity."
+  },
+  "typography": {
+    "font_family_main": "Inter, sans-serif",
+    "font_family_display": "Plus Jakarta Sans, sans-serif",
+    "font_family_mono": "JetBrains Mono, monospace",
+    "headings": {
+      "h1": "text-2xl sm:text-3xl font-bold tracking-tight text-slate-100",
+      "h2": "text-xl sm:text-2xl font-semibold tracking-tight text-slate-200",
+      "h3": "text-lg font-medium text-slate-200",
+      "h4": "text-sm font-semibold uppercase tracking-wider text-slate-400"
+    },
+    "body": "text-sm leading-relaxed text-slate-300",
+    "labels": "text-xs font-medium uppercase tracking-widest text-slate-400"
+  },
+  "colors": {
+    "background_dark": "#0b0d14",
+    "surface_dark": "#121520",
+    "surface_card": "#1a1e2e",
+    "surface_border": "#282e42",
+    "surface_hover": "#22273b",
+    "accents": {
+      "violet_primary": "#7c3aed",
+      "violet_light": "#8b5cf6",
+      "violet_glow": "rgba(124, 58, 237, 0.25)",
+      "blue_electric": "#0098f2",
+      "blue_glow": "rgba(0, 152, 242, 0.25)",
+      "gold_champagne": "#d4af37",
+      "gold_light": "#f3e5ab",
+      "gold_glow": "rgba(212, 175, 55, 0.2)"
+    },
+    "a4_preview": {
+      "paper_background": "#ffffff",
+      "paper_text": "#0f172a",
+      "paper_muted": "#475569",
+      "paper_table_header": "#f1f5f9",
+      "paper_border": "#e2e8f0",
+      "paper_accent": "#1e1b4b"
+    }
+  },
+  "layout_and_structure": {
+    "responsive_split_screen": "2-column layout on desktop (50% dynamic input form / 50% live A4 invoice preview sticky), stacked single column on mobile with seamless tab/scroll toggles.",
+    "left_panel": "Form panel with styled collapsible sections (Émetteur, Client, Détails Invoice, Line Items, Taxes & Remises, Payment & Footer Info). Fully interactive with immediate reactivity.",
+    "right_panel": "Live dynamic A4 paper simulator (aspect ratio ~ 1 : 1.414, padding 32px to 40px) with dark canvas background to highlight the paper elevation shadow. Includes high-visibility top action bar (Download PDF, Print, Currency Switcher, Language Switcher, Clear Cache/Reset).",
+    "multi_language_rtl": "Full trilingual support: French (FR), English (EN), and Arabic (AR). RTL layout direction auto-applied when AR is selected (`dir='rtl'` on html/container, swapping text alignments and icon placements)."
+  },
+  "key_features_and_controls": {
+    "currencies": ["DZD (DA)", "EUR (€)", "USD ($)"],
+    "languages": ["FR", "EN", "AR"],
+    "logo_management": "Drag-and-drop Base64 image file uploader with instant thumbnail preview and clear/replace option.",
+    "item_table": "Dynamic row insertion and deletion, automated calculations (Qty * Price HT), global discount (% or flat rate), TVA tax %, Subtotal HT, Total Tax, Total Discount, and prominent Total TTC Net to Pay.",
+    "actions": {
+      "pdf_export": "Instant browser download via html2pdf.js targeting the clean A4 DOM element.",
+      "print_mode": "Native print triggers `@media print` CSS rules hiding sidebar, backgrounds, buttons, and forcing exact white background and full-width print fitting.",
+      "new_invoice": "Resets invoice number (or increments), client fields, and item list while preserving business emitter profile.",
+      "reset_profile": "Completely clears LocalStorage cache and restores fresh default demo profile."
+    }
+  },
+  "testing_requirements": {
+    "mandatory_rule": "All interactive buttons, input fields, selects, tabs, dropdowns, and live preview calculated totals MUST have explicit kebab-case `data-testid` attributes.",
+    "core_test_ids": {
+      "app_header": "app-header",
+      "language_switcher": "language-switcher-select",
+      "currency_switcher": "currency-switcher-select",
+      "emitter_logo_upload": "emitter-logo-upload-input",
+      "emitter_name_input": "emitter-name-input",
+      "client_name_input": "client-name-input",
+      "invoice_number_input": "invoice-number-input",
+      "invoice_date_input": "invoice-date-input",
+      "invoice_due_date_input": "invoice-due-date-input",
+      "add_item_button": "add-item-button",
+      "remove_item_button": "remove-item-button-",
+      "subtotal_amount": "preview-subtotal-ht",
+      "tax_amount": "preview-tax-amount",
+      "total_ttc_amount": "preview-total-ttc",
+      "download_pdf_button": "download-pdf-button",
+      "print_button": "print-invoice-button",
+      "new_invoice_button": "new-invoice-button",
+      "reset_profile_button": "reset-profile-button",
+      "a4_preview_container": "a4-invoice-preview"
+    }
+  },
+  "general_ui_ux_guidelines": {
+    "component_usage": "Use installed Shadcn primitives (Card, Input, Select, Button, Dialog, Switch, Tooltip, Sonner toasts) with dark-mode tailored classes. No raw standard select dropdowns.",
+    "interactive_states": "Every button has active/hover glows with subtle border highlights in violet (#7c3aed), electric blue (#0098f2), or gold (#d4af37). Focus rings must be sharp and visible.",
+    "toast_notifications": "Use `sonner` for toast alerts when PDF is generated, invoice reset, or cache cleared.",
+    "print_css": "@media print rules must strip app headers, controls, shadows, dark backgrounds, and ensure the A4 invoice is perfectly framed with pure white background and clear dark text."
+  }
+}

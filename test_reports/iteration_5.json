@@ -1,0 +1,22 @@
+{
+  "summary": "Verified the rewarded-ad -> PDF download bug fix in RewardedAdDialog.jsx. The primary reported bug ('après avoir vu la vidéo le téléchargement ne se fait pas') is FIXED. Ran the full ad watch->download flow twice consecutively; both attempts produced a browser download event with filename FAC-2026-001.pdf (~276 KB each). Cancel path closes the dialog without triggering a download. Regression: the invoice is auto-saved to Historique after each ad-gated download (FAC-2026-001 visible in the history side panel).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "RewardedAdDialog.jsx: legacy timerRef/clearInterval branch in clearTimer() is now dead code because the countdown is effect-driven (only clearTimeout of the per-tick timer is used). Minor cleanup opportunity, not a bug.",
+    "grantReward() sets a setTimeout(1100ms) but has no cleanup if the dialog is closed manually during 'granted' phase — currently harmless because rewardedRef guards double invocation, but the 1100ms fallback timer is not tracked in the unmount cleanup path (only via clearTimer on close/unmount, which does clear it — OK)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Bug fully validated on public preview URL. Playwright expect_download confirms browser download event fires after the 5s simulated countdown + 1.1s grant delay. StrictMode double-mount no longer cancels the reward. Repeat runs (x2) both succeeded with identical filename. History regression also confirmed.",
+  "rca of the issue": "Original bug: countdown used setInterval + called grantReward()/setTimeout(onReward) from *inside* a setRemaining updater. React 18 StrictMode invokes state updater functions twice for reasoning; the second (discarded) invocation still executed the side effect, scheduling a second grant timeout and clearing/resetting refs so onReward() was never called or was cancelled. Fix moved the timer into a useEffect keyed on [phase, remaining] and made grantReward idempotent via rewardedRef; onReward now fires deterministically ~1.1s after the countdown reaches 0."
+}

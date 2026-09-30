@@ -1,0 +1,29 @@
+{
+  "summary": "Frontend-only testing of the 3 new Invoice History enhancements (search, payment status/unpaid total, export/import) plus regression on persistence and duplicate. 20/20 assertions passed on the public preview URL. All flows verified end-to-end using Playwright with data-testid selectors.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "InvoiceHistory unpaid-total block", "issues": ["Multi-currency amounts render inline with no separator (e.g. '171 360,00 DA171 360,00 €'). Visually readable via distinct spacing but a divider or comma would improve legibility. Non-blocking."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "InvoiceHistory.jsx & InvoiceApp.jsx are well-scoped (<250 lines each), use useMemo appropriately, and correctly guard export button when history is empty.",
+    "importHistory does not validate individual entry shape beyond `x.invoice.number` existence — a malformed entry (e.g. missing items) could be merged and later crash computeTotals. Consider deeper validation.",
+    "exportHistory filename uses todayISO() — fine, but two exports on the same day overwrite in some browsers; adding a timestamp suffix would be safer.",
+    "toggleStatus and importHistory rely on entry.id uniqueness; imported entries keep their original id (from a foreign export). If two backups share an id, later toggleStatus would flip both. Consider re-generating id on import.",
+    "unpaidByCurrency computes computeTotals inside .forEach for every render pass — acceptable but could memoize per entry if history grows large.",
+    "history-status-<invoiceNumber> testid uses the invoice number which can contain characters that need escaping in CSS selectors; current numbers are safe but ids from imports could cause issues."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a", "frontend": "100%"},
+  "test_credentials": "None — no backend/auth.",
+  "seed_data_creation": "Two invoices saved in-app via UI (FAC-2026-001 Entreprise Horizon, FAC-2026-002 Studio Lumen) + one imported via file upload (FAC-2026-050 Imported Co).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All 3 new history features (search, payment status + unpaid-total, export/import) work correctly. Toast overlay from sonner intercepts pointer events; use JS-level clicks (element.click() via page.evaluate) rather than page.click to bypass without unmounting toasts (removing toast DOM manually crashes React reconciler). Multi-currency unpaid grouping verified by re-opening an entry, switching currency to EUR and re-saving (upsert preserves status). Duplicate correctly increments to next non-colliding number (FAC-2026-003 when 001/002/050 exist).",
+  "rca of the issue": "N/A — no bugs found."
+}
