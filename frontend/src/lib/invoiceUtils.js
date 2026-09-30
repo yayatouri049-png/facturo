@@ -155,10 +155,10 @@ export function makeEmptyInvoice(number) {
     date: todayISO(),
     dueDate: plusDaysISO(30),
     client: { name: "", address: "", email: "", phone: "", nif: "", rc: "", ai: "" },
-    items: [{ id: uid(), description: "", qty: 1, price: 0 }],
-    vatRate: 19,
+    items: [{ id: uid(), description: "", qty: "", price: "" }],
+    vatRate: "",
     discountType: "percent",
-    discountValue: 0,
+    discountValue: "",
   };
 }
 
