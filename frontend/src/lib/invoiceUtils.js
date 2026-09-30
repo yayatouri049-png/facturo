@@ -138,13 +138,10 @@ export function makeDefaultInvoice() {
       rc: "",
       ai: "",
     },
-    items: [
-      { id: uid(), description: "Conception & développement site web", qty: 1, price: 120000 },
-      { id: uid(), description: "Maintenance mensuelle", qty: 3, price: 8000 },
-    ],
-    vatRate: 19,
+    items: [],
+    vatRate: "",
     discountType: "percent",
-    discountValue: 0,
+    discountValue: "",
   };
 }
 
