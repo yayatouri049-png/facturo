@@ -79,7 +79,7 @@ export function uid() {
 // ---- LocalStorage ----
 export const STORAGE_KEYS = {
   profile: "facturaflow_profile",
-  invoice: "facturaflow_invoice",
+  invoice: "facturaflow_invoice_v2",
   lang: "facturaflow_lang",
   currency: "facturaflow_currency",
   history: "facturaflow_history",
@@ -138,7 +138,8 @@ export function makeDefaultInvoice() {
       rc: "",
       ai: "",
     },
-    items: [],
+    items: [{ id: uid(), description: "", qty: "", price: "" }],
+
     vatRate: "",
     discountType: "percent",
     discountValue: "",
@@ -147,7 +148,7 @@ export function makeDefaultInvoice() {
 
 export function makeEmptyInvoice(number) {
   return {
-    number: number || "FAC-2026-001",
+    number: number || "",
     date: todayISO(),
     dueDate: plusDaysISO(30),
     client: { name: "", address: "", email: "", phone: "", nif: "", rc: "", ai: "" },
