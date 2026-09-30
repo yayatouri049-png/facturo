@@ -110,19 +110,18 @@ export function clearAllLS() {
 // ---- Defaults / demo data ----
 export const DEFAULT_PROFILE = {
   logo: "",
-  name: "Studio Nova SARL",
-  address: "12 Rue des Oliviers\n16000 Alger, Algérie",
-  phone: "+213 555 01 02 03",
-  email: "contact@studionova.dz",
-  taxId: "000 111 222 00033",
-  rc: "16/00-1234567 B 22",
-  ai: "16123456789",
-  legalForm: "SARL",
-  capital: "1 000 000 DA",
-  iban: "DZ12 3456 7890 1234 5678 90",
-  bank: "CPA — Crédit Populaire d'Algérie",
-  legalTerms:
-    "Paiement à 30 jours. Pénalités de retard au taux légal en vigueur. Aucun escompte pour paiement anticipé.",
+  name: "",
+  address: "",
+  phone: "",
+  email: "",
+  taxId: "",
+  rc: "",
+  ai: "",
+  legalForm: "",
+  capital: "",
+  iban: "",
+  bank: "",
+  legalTerms: "",
 };
 
 export function makeDefaultInvoice() {
@@ -131,10 +130,10 @@ export function makeDefaultInvoice() {
     date: todayISO(),
     dueDate: plusDaysISO(30),
     client: {
-      name: "Entreprise Horizon",
-      address: "45 Boulevard Central\n31000 Oran",
-      email: "compta@horizon.dz",
-      phone: "+213 770 22 33 44",
+      name: "",
+      address: "",
+      email: "",
+      phone: "",
       nif: "",
       rc: "",
       ai: "",
