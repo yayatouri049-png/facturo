@@ -79,7 +79,7 @@ export function uid() {
 // ---- LocalStorage ----
 export const STORAGE_KEYS = {
   profile: "facturaflow_profile",
-  invoice: "facturaflow_invoice_v2",
+  invoice: "facturaflow_invoice_v3",
   lang: "facturaflow_lang",
   currency: "facturaflow_currency",
   history: "facturaflow_history",
