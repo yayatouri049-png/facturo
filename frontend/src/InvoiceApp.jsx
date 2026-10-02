@@ -534,6 +534,14 @@ const handlePrint = () => {
         onExport={exportHistory}
         onImport={importHistory}
       />
+      {/* Liens légaux AdSense */}
+      <footer className="mt-12 py-6 border-t border-slate-800 text-center text-xs text-slate-500 flex justify-center items-center gap-4">
+        <a href="/a-propos.html" className="hover:text-slate-300 transition-colors">À propos</a>
+        <span>•</span>
+        <a href="/confidentialite.html" className="hover:text-slate-300 transition-colors">Confidentialité</a>
+        <span>•</span>
+        <a href="/contact.html" className="hover:text-slate-300 transition-colors">Contact</a>
+      </footer>
     </div>
   );
 }
