@@ -55,6 +55,31 @@ export default function InvoiceApp() {
   const [history, setHistory] = useState(() => loadLS(STORAGE_KEYS.history, []));
   const [historyOpen, setHistoryOpen] = useState(false);
 
+  // Compteur global de factures générées
+  const [globalCount, setGlobalCount] = useState(null);
+
+  useEffect(() => {
+    fetch("https://countapi.mileshilliard.com/api/v1/get/facturo_dassawen_invoices")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.value) {
+          setGlobalCount(parseInt(data.value, 10));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const incrementGlobalCount = () => {
+    fetch("https://countapi.mileshilliard.com/api/v1/hit/facturo_dassawen_invoices")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.value) {
+          setGlobalCount(parseInt(data.value, 10));
+        }
+      })
+      .catch(() => {});
+  };
+
   const t = translations[lang];
   const dir = t.dir;
   const theme = getTemplate(templateId);
@@ -509,7 +534,8 @@ const handlePrint = () => {
         open={adOpen}
         onOpenChange={setAdOpen}
        onReward={() => {
-            if (adAction === 'print') {
+            incrementGlobalCount();
+        if (adAction === 'print') {
               window.print();
             } else {
               generatePdf();
@@ -535,12 +561,20 @@ const handlePrint = () => {
         onImport={importHistory}
       />
       {/* Liens légaux AdSense */}
-      <footer className="mt-12 py-6 border-t border-slate-800 text-center text-xs text-slate-500 flex justify-center items-center gap-4">
-        <a href="/a-propos.html" className="hover:text-slate-300 transition-colors">À propos</a>
-        <span>•</span>
-        <a href="/confidentialite.html" className="hover:text-slate-300 transition-colors">Confidentialité</a>
-        <span>•</span>
-        <a href="/contact.html" className="hover:text-slate-300 transition-colors">Contact</a>
+     <footer className="mt-12 py-6 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col items-center gap-3">
+        {globalCount !== null && (
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-400 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span><strong className="text-white font-semibold">{globalCount.toLocaleString()}</strong> factures générées</span>
+          </div>
+        )}
+        <div className="flex justify-center items-center gap-4">
+          <a href="/a-propos.html" className="hover:text-slate-300 transition-colors">À propos</a>
+          <span>•</span>
+          <a href="/confidentialite.html" className="hover:text-slate-300 transition-colors">Confidentialité</a>
+          <span>•</span>
+          <a href="/contact.html" className="hover:text-slate-300 transition-colors">Contact</a>
+        </div>
       </footer>
     </div>
   );
