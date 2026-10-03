@@ -133,7 +133,7 @@ export const translations = {
     // rewarded ad
     adTitle: "Téléchargement gratuit de votre facture",
     adMessage:
-      "Regardez une courte vidéo publicitaire pour débloquer immédiatement votre facture PDF en haute résolution.",
+      "Regardez une courte vidéo publicitaire pour débloquer immédiatement votre facture PDF.",
     adWatch: "Regarder la vidéo et télécharger",
     adCancel: "Annuler",
     adLoading: "Chargement de la publicité...",
@@ -338,7 +338,7 @@ export const translations = {
     thankYou: "Thank you for your business.",
     adTitle: "Free download of your invoice",
     adMessage:
-      "Watch a short video ad to instantly unlock your high-resolution PDF invoice.",
+      "Watch a short video ad to instantly unlock your PDF invoice.",
     adWatch: "Watch video & download",
     adCancel: "Cancel",
     adLoading: "Loading the ad...",
@@ -541,7 +541,7 @@ export const translations = {
       "هل تريد حقًا إعادة تعيين بيانات شركتك؟ (سيتم الاحتفاظ ببطاقات العملاء وسجل الفواتير).",
     thankYou: "شكرًا لثقتكم بنا.",
     adTitle: "تنزيل فاتورتك مجانًا",
-    adMessage: "شاهد إعلان فيديو قصير لفتح فاتورتك بصيغة PDF عالية الدقة فورًا.",
+    adMessage: "شاهد إعلان فيديو قصير لفتح فاتورتك بصيغة PDF فورًا.",
     adWatch: "مشاهدة الفيديو والتنزيل",
     adCancel: "إلغاء",
     adLoading: "جارٍ تحميل الإعلان...",

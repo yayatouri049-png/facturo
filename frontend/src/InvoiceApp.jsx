@@ -13,6 +13,7 @@ import { Download, Printer, FilePlus2, RotateCcw, Languages, Save, History, Pale
 import InvoiceForm from "@/components/InvoiceForm";
 import InvoicePreview from "@/components/InvoicePreview";
 import RewardedAdDialog from "@/components/RewardedAdDialog";
+import { REWARDED_ADS_ENABLED, checkIsPro } from "@/lib/adConfig";
 import InvoiceHistory from "@/components/InvoiceHistory";
 import ClientsDrawer from "@/components/ClientsDrawer";
 import { useClients } from "@/hooks/useClients";
@@ -53,6 +54,7 @@ export default function InvoiceApp() {
   const t = translations[lang] || translations.fr;
   const dir = t.dir;
   const theme = getTemplate(templateId);
+  const isPro = checkIsPro(profile);
 
   const {
     clients,
@@ -386,12 +388,22 @@ export default function InvoiceApp() {
   };
 
   const handleDownloadPdf = () => {
+    if (!REWARDED_ADS_ENABLED || isPro) {
+      incrementGlobalCount();
+      generatePdf();
+      return;
+    }
     setAdAction('download');
     setAdOpen(true);
   };
 
   const handlePrint = () => {
     upsertHistory({ ...invoice, docType, blNumber, poNumber, paymentStatus }, currency);
+    if (!REWARDED_ADS_ENABLED || isPro) {
+      incrementGlobalCount();
+      window.print();
+      return;
+    }
     setAdAction('print');
     setAdOpen(true);
   };
@@ -634,6 +646,7 @@ export default function InvoiceApp() {
       <RewardedAdDialog
         open={adOpen}
         onOpenChange={setAdOpen}
+        isPro={isPro}
        onReward={() => {
             incrementGlobalCount();
         if (adAction === 'print') {

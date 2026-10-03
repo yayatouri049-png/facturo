@@ -8,10 +8,15 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Play, Gift, AlertTriangle, Download, Loader2, Clapperboard } from "lucide-react";
-import { USE_AD_SIMULATION, AD_SIMULATION_SECONDS, REWARDED_AD_UNIT } from "@/lib/adConfig";
+import {
+  REWARDED_ADS_ENABLED,
+  USE_AD_SIMULATION,
+  AD_SIMULATION_SECONDS,
+  REWARDED_AD_UNIT,
+} from "@/lib/adConfig";
 
 // phases: intro | loading | playing | granted | error
-export default function RewardedAdDialog({ open, onOpenChange, onReward, t, dir }) {
+export default function RewardedAdDialog({ open, onOpenChange, onReward, t, dir, isPro = false }) {
   const [phase, setPhase] = useState("intro");
   const [remaining, setRemaining] = useState(AD_SIMULATION_SECONDS);
   const timerRef = useRef(null);
@@ -29,16 +34,31 @@ export default function RewardedAdDialog({ open, onOpenChange, onReward, t, dir 
     }
   };
 
-  // reset state whenever the dialog opens
+  // reset state whenever the dialog opens, or immediately grant & close if disabled / isPro
   useEffect(() => {
     if (open) {
+      if (!REWARDED_ADS_ENABLED || isPro) {
+        onReward();
+        onOpenChange(false);
+        return;
+      }
+      // If real ad is configured but Google Publisher Tag is not loaded or blocked
+      if (!USE_AD_SIMULATION && typeof window !== "undefined") {
+        const gt = window.googletag;
+        if (!gt || !gt.cmd) {
+          setPhase("error");
+          setRemaining(AD_SIMULATION_SECONDS);
+          rewardedRef.current = false;
+          return;
+        }
+      }
       setPhase("intro");
       setRemaining(AD_SIMULATION_SECONDS);
       rewardedRef.current = false;
     } else {
       clearTimer();
     }
-  }, [open]);
+  }, [open, isPro, onReward, onOpenChange]);
 
   useEffect(() => () => clearTimer(), []);
 
@@ -52,6 +72,19 @@ export default function RewardedAdDialog({ open, onOpenChange, onReward, t, dir 
       onOpenChange(false);
     }, 1100);
   }, [onReward, onOpenChange]);
+
+  // Si la pub n'est pas disponible ou échoue, télécharge quand même automatiquement
+  useEffect(() => {
+    if (phase !== "error") return undefined;
+    const fallbackId = setTimeout(() => {
+      if (!rewardedRef.current) {
+        rewardedRef.current = true;
+        onReward();
+        onOpenChange(false);
+      }
+    }, 1200);
+    return () => clearTimeout(fallbackId);
+  }, [phase, onReward, onOpenChange]);
 
   // simulation countdown — effect-driven so it is StrictMode-safe
   useEffect(() => {
@@ -121,11 +154,18 @@ export default function RewardedAdDialog({ open, onOpenChange, onReward, t, dir 
   };
 
   const handleDirectDownload = () => {
+    if (rewardedRef.current) return;
+    rewardedRef.current = true;
+    clearTimer();
     onReward();
     onOpenChange(false);
   };
 
   const progress = ((AD_SIMULATION_SECONDS - remaining) / AD_SIMULATION_SECONDS) * 100;
+
+  if (!open || !REWARDED_ADS_ENABLED || isPro) {
+    return null;
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -204,6 +244,9 @@ export default function RewardedAdDialog({ open, onOpenChange, onReward, t, dir 
                 <AlertTriangle className="h-6 w-6 text-amber-400" />
               </div>
               <p className="text-sm font-medium text-amber-200">{t.adBlocked}</p>
+              <p className="flex items-center gap-1.5 text-xs text-slate-400">
+                <Download className="h-3.5 w-3.5 animate-pulse text-emerald-400" /> {t.adDownloading}
+              </p>
             </div>
           )}
         </div>
