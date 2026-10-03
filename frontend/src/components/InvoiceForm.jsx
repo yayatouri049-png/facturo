@@ -145,7 +145,12 @@ export default function InvoiceForm({
             {DOC_TYPES.map((type) => {
               const active = docType === type;
               const typeKey = `docType_${type.replace(/\s+/g, "")}`;
-              const label = t[typeKey] || type;
+              const label =
+                t[typeKey] ||
+                (type === "Bon de commande"
+                  ? t.docType_BonDeCommande || t.title_BonDeCommande
+                  : null) ||
+                type;
               const testId = `doc-type-btn-${type.toLowerCase().replace(/\s+/g, "-")}`;
               return (
                 <button
@@ -477,7 +482,7 @@ export default function InvoiceForm({
             <Input
               data-testid="bl-number-input"
               className={inputCls}
-              placeholder="ex: BL-2026-001"
+              placeholder={t.blPlaceholder || "ex: BL-2026-001"}
               value={blNumber || ""}
               onChange={(e) => onBlNumberChange(e.target.value)}
             />
@@ -486,7 +491,7 @@ export default function InvoiceForm({
             <Input
               data-testid="po-number-input"
               className={inputCls}
-              placeholder="ex: BC-2026-042"
+              placeholder={t.poPlaceholder || "ex: BC-2026-042"}
               value={poNumber || ""}
               onChange={(e) => onPoNumberChange(e.target.value)}
             />

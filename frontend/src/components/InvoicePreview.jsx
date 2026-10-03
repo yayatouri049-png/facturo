@@ -51,7 +51,7 @@ export default function InvoicePreview({
       switch (type) {
         case "Facture": return "فاتورة";
         case "Devis": return "عرض أسعار";
-        case "Bon de commande": return "طلب شراء";
+        case "Bon de commande": return "أمر شراء";
         case "Avoir": return "إشعار دائن";
         default: return type || "فاتورة";
       }

@@ -61,6 +61,20 @@ export default function InvoiceApp() {
     deleteClient: deleteClientFromBook,
     exportClients,
     importClients,
+    storageMode,
+    setStorageMode,
+    isSupported,
+    fileHandle,
+    fileName,
+    fileStatus,
+    lastSavedTime,
+    isSavingToFile,
+    linkFile,
+    reconnectFile,
+    unlinkFile,
+    pendingConflict,
+    resolveConflict,
+    cancelConflict,
   } = useClients({ t, lang });
 
   // Compteur global de factures générées
@@ -661,21 +675,34 @@ export default function InvoiceApp() {
         onDeleteClient={deleteClientFromBook}
         onExport={exportClients}
         onImport={importClients}
+        storageMode={storageMode}
+        onStorageModeChange={setStorageMode}
+        isSupported={isSupported}
+        fileName={fileName}
+        fileStatus={fileStatus}
+        lastSavedTime={lastSavedTime}
+        isSavingToFile={isSavingToFile}
+        onLinkFile={linkFile}
+        onReconnectFile={reconnectFile}
+        onUnlinkFile={unlinkFile}
+        pendingConflict={pendingConflict}
+        onResolveConflict={resolveConflict}
+        onCancelConflict={cancelConflict}
       />
       {/* Liens légaux AdSense */}
      <footer className="mt-12 py-6 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col items-center gap-3">
         {globalCount !== null && (
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-400 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span><strong className="text-white font-semibold">{globalCount.toLocaleString()}</strong> factures générées</span>
+            <span><strong className="text-white font-semibold">{globalCount.toLocaleString()}</strong> {t.invoicesGenerated || "factures générées"}</span>
           </div>
         )}
         <div className="flex justify-center items-center gap-4">
-          <a href="/a-propos.html" className="hover:text-slate-300 transition-colors">À propos</a>
+          <a href="/a-propos.html" className="hover:text-slate-300 transition-colors">{t.about || "À propos"}</a>
           <span>•</span>
-          <a href="/confidentialite.html" className="hover:text-slate-300 transition-colors">Confidentialité</a>
+          <a href="/confidentialite.html" className="hover:text-slate-300 transition-colors">{t.privacy || "Confidentialité"}</a>
           <span>•</span>
-          <a href="/contact.html" className="hover:text-slate-300 transition-colors">Contact</a>
+          <a href="/contact.html" className="hover:text-slate-300 transition-colors">{t.contact || "Contact"}</a>
         </div>
       </footer>
     </div>
