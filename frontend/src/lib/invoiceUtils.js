@@ -48,19 +48,26 @@ export function lineTotal(it) {
 }
 
 export function computeTotals(invoice) {
-  const subtotal = (invoice.items || []).reduce((sum, it) => sum + lineTotal(it), 0);
+  const subtotal = (invoice?.items || []).reduce((sum, it) => sum + lineTotal(it), 0);
   let discountAmount = 0;
-  const dv = Number(invoice.discountValue) || 0;
-  if (invoice.discountType === "percent") {
+  const dv = Number(invoice?.discountValue) || 0;
+  if (invoice?.discountType === "percent") {
     discountAmount = (subtotal * dv) / 100;
   } else {
     discountAmount = dv;
   }
   discountAmount = Math.min(discountAmount, subtotal);
   const base = subtotal - discountAmount;
-  const vat = (base * (Number(invoice.vatRate) || 0)) / 100;
+  const vat = (base * (Number(invoice?.vatRate) || 0)) / 100;
   const total = base + vat;
-  return { subtotal, discountAmount, base, vat, total };
+  const totalTTC = total;
+  const deposit = Number(invoice?.deposit || 0);
+  const netToPay = Math.max(0, totalTTC - Number(deposit || 0));
+  return { subtotal, discountAmount, base, vat, total, totalTTC, deposit, netToPay };
+}
+
+export function computeNetToPay(totalTTC, deposit) {
+  return Math.max(0, Number(totalTTC || 0) - Number(deposit || 0));
 }
 
 export function nextInvoiceNumber(num) {
@@ -84,6 +91,10 @@ export const STORAGE_KEYS = {
   currency: "facturaflow_currency",
   history: "facturaflow_history",
   template: "facturaflow_template",
+  blNumber: "facturaflow_bl",
+  poNumber: "facturaflow_po",
+  docType: "facturaflow_doc_type",
+  paymentStatus: "facturaflow_payment_stamp",
 };
 
 export function loadLS(key, fallback) {
@@ -139,10 +150,14 @@ export function makeDefaultInvoice() {
       ai: "",
     },
     items: [{ id: uid(), description: "", qty: "", price: "" }],
-
     vatRate: "",
     discountType: "percent",
     discountValue: "",
+    deposit: "",
+    blNumber: "",
+    poNumber: "",
+    docType: "Facture",
+    paymentStatus: "none",
   };
 }
 
@@ -150,12 +165,17 @@ export function makeEmptyInvoice(number) {
   return {
     number: number || "",
     date: todayISO(),
-    dueDate: plusDaysISO(30),
+    dueDate: "",
     client: { name: "", address: "", email: "", phone: "", nif: "", rc: "", ai: "" },
     items: [{ id: uid(), description: "", qty: "", price: "" }],
     vatRate: "",
     discountType: "percent",
     discountValue: "",
+    deposit: "",
+    blNumber: "",
+    poNumber: "",
+    docType: "Facture",
+    paymentStatus: "none",
   };
 }
 
@@ -168,5 +188,10 @@ export function duplicateInvoice(snapshot, newNumber) {
     dueDate: plusDaysISO(30),
     client: { ...snapshot.client },
     items: (snapshot.items || []).map((it) => ({ ...it, id: uid() })),
+    deposit: snapshot.deposit || "",
+    blNumber: snapshot.blNumber || "",
+    poNumber: snapshot.poNumber || "",
+    docType: snapshot.docType || "Facture",
+    paymentStatus: "none",
   };
 }

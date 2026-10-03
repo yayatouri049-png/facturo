@@ -22,7 +22,16 @@ import {
   Plus,
   ImageOff,
 } from "lucide-react";
-import { formatMoney, lineTotal } from "@/lib/invoiceUtils";
+import { formatMoney, lineTotal, computeTotals, plusDaysISO } from "@/lib/invoiceUtils";
+
+const DOC_TYPES = ["Facture", "Devis", "Bon de commande", "Avoir"];
+
+const STATUS_OPTIONS = [
+  { id: "none", labelKey: "stampNone", labelDefault: "Aucun", activeCls: "bg-slate-700 text-white ring-1 ring-slate-400 shadow-md" },
+  { id: "PAID", labelKey: "stampPaid", labelDefault: "Payée", activeCls: "bg-emerald-600 text-white ring-1 ring-emerald-400 shadow-lg shadow-emerald-600/30" },
+  { id: "PENDING", labelKey: "stampPending", labelDefault: "En attente", activeCls: "bg-amber-600 text-white ring-1 ring-amber-400 shadow-lg shadow-amber-600/30" },
+  { id: "CANCELLED", labelKey: "stampCancelled", labelDefault: "Annulée", activeCls: "bg-rose-600 text-white ring-1 ring-rose-400 shadow-lg shadow-rose-600/30" },
+];
 
 const Section = ({ icon: Icon, title, hint, children, accent = "#7c3aed" }) => (
   <div className="rounded-2xl border border-[#282e42] bg-[#141826]/80 backdrop-blur-sm overflow-hidden fade-in">
@@ -68,9 +77,79 @@ export default function InvoiceForm({
   removeItem,
   onLogoUpload,
   removeLogo,
+  blNumber,
+  poNumber,
+  onBlNumberChange,
+  onPoNumberChange,
+  docType,
+  onDocTypeChange,
+  paymentStatus,
+  onPaymentStatusChange,
 }) {
   return (
     <div className="space-y-5">
+      {/* TYPE DE DOCUMENT & STATUT DE PAIEMENT */}
+      <div className="rounded-2xl border border-[#282e42] bg-[#141826]/80 backdrop-blur-sm p-4 space-y-4 fade-in">
+        {/* Sélecteur de type de document */}
+        <div>
+          <Label className="text-[11px] font-medium uppercase tracking-wider text-slate-400 block mb-2">
+            {t.docTypeLabel || "Type de document"}
+          </Label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {DOC_TYPES.map((type) => {
+              const active = docType === type;
+              const typeKey = `docType_${type.replace(/\s+/g, "")}`;
+              const label = t[typeKey] || type;
+              const testId = `doc-type-btn-${type.toLowerCase().replace(/\s+/g, "-")}`;
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  data-testid={testId}
+                  onClick={() => onDocTypeChange(type)}
+                  className={`flex items-center justify-center px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                    active
+                      ? "bg-violet-600 text-white shadow-lg shadow-violet-600/30 ring-1 ring-violet-400"
+                      : "border border-[#282e42] bg-[#0e1220] text-slate-300 hover:bg-[#1a2030] hover:text-white"
+                  }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Tampon de statut de paiement */}
+        <div className="pt-3 border-t border-[#282e42]/60">
+          <Label className="text-[11px] font-medium uppercase tracking-wider text-slate-400 block mb-2">
+            {t.paymentStatusLabel || "Tampon de statut"}
+          </Label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {STATUS_OPTIONS.map((opt) => {
+              const active = paymentStatus === opt.id;
+              const label = t[opt.labelKey] || opt.labelDefault;
+              const testId = `status-stamp-btn-${opt.id.toLowerCase()}`;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  data-testid={testId}
+                  onClick={() => onPaymentStatusChange(opt.id)}
+                  className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                    active
+                      ? opt.activeCls
+                      : "border border-[#282e42] bg-[#0e1220] text-slate-400 hover:bg-[#1a2030] hover:text-white"
+                  }`}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
       {/* EMETTEUR */}
       <Section icon={Building2} title={t.emitter} hint={t.emitterHint} accent="#7c3aed">
         <Field label={t.logo}>
@@ -230,13 +309,80 @@ export default function InvoiceForm({
               onChange={(e) => updateInvoice("date", e.target.value)}
             />
           </Field>
-          <Field label={t.dueDate}>
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  data-testid="due-date-toggle-checkbox"
+                  checked={Boolean(invoice.dueDate)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      updateInvoice("dueDate", plusDaysISO(30));
+                    } else {
+                      updateInvoice("dueDate", "");
+                    }
+                  }}
+                  className="rounded border-[#282e42] bg-[#0e1220] text-violet-600 focus:ring-violet-500 h-3.5 w-3.5 cursor-pointer"
+                />
+                <span className="text-xs font-semibold text-slate-300">
+                  {t.dueDate}
+                </span>
+              </label>
+              {invoice.dueDate ? (
+                <button
+                  type="button"
+                  data-testid="clear-due-date-btn"
+                  onClick={() => updateInvoice("dueDate", "")}
+                  className="text-[11px] text-slate-400 hover:text-red-400 transition-colors"
+                  title={t.clearDueDate || "Effacer la date d'échéance"}
+                >
+                  ✕ {t.clear || "Effacer"}
+                </button>
+              ) : (
+                <span className="text-[10px] text-slate-500 uppercase tracking-wider">
+                  {t.optional || "Optionnel"}
+                </span>
+              )}
+            </div>
+            <div className="relative">
+              <Input
+                type="date"
+                data-testid="invoice-due-date-input"
+                className={`${inputCls} [color-scheme:dark] ${invoice.dueDate ? "pr-8" : "text-slate-500 opacity-80"}`}
+                value={invoice.dueDate || ""}
+                onChange={(e) => updateInvoice("dueDate", e.target.value)}
+              />
+              {invoice.dueDate ? (
+                <button
+                  type="button"
+                  onClick={() => updateInvoice("dueDate", "")}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-400 text-xs p-1"
+                  title={t.clear || "Effacer"}
+                >
+                  ✕
+                </button>
+              ) : null}
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <Field label={t.blNumber}>
             <Input
-              type="date"
-              data-testid="invoice-due-date-input"
-              className={`${inputCls} [color-scheme:dark]`}
-              value={invoice.dueDate}
-              onChange={(e) => updateInvoice("dueDate", e.target.value)}
+              data-testid="bl-number-input"
+              className={inputCls}
+              placeholder="ex: BL-2026-001"
+              value={blNumber || ""}
+              onChange={(e) => onBlNumberChange(e.target.value)}
+            />
+          </Field>
+          <Field label={t.poNumber}>
+            <Input
+              data-testid="po-number-input"
+              className={inputCls}
+              placeholder="ex: BC-2026-042"
+              value={poNumber || ""}
+              onChange={(e) => onPoNumberChange(e.target.value)}
             />
           </Field>
         </div>
@@ -380,6 +526,28 @@ export default function InvoiceForm({
             />
           </Field>
         </div>
+        <Field label={t.deposit || "Acompte versé"}>
+          <Input
+            type="number"
+            min="0"
+            step="0.01"
+            data-testid="deposit-input"
+            className={inputCls}
+            placeholder="0.00"
+            value={invoice.deposit ?? ""}
+            onChange={(e) => updateInvoice("deposit", e.target.value)}
+          />
+        </Field>
+        {Number(invoice.deposit || 0) > 0 ? (
+          <div className="flex items-center justify-between rounded-xl bg-violet-500/10 border border-violet-500/30 px-3 py-2 text-xs">
+            <span className="text-violet-200 font-medium">{t.netToPay || "Montant restant dû"} :</span>
+            <span className="text-violet-300 font-bold tabular-nums" data-testid="form-net-to-pay">
+              <bdi dir="ltr" style={{ unicodeBidi: "isolate" }}>
+                {formatMoney(computeTotals(invoice).netToPay, currency, lang)}
+              </bdi>
+            </span>
+          </div>
+        ) : null}
       </Section>
 
       {/* PAYMENT */}

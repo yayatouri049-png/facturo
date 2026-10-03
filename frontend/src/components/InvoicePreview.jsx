@@ -3,13 +3,98 @@ import { formatMoney, formatDate, computeTotals, lineTotal } from "@/lib/invoice
 import { amountInWordsSentence } from "@/lib/numberToWords";
 import { DEFAULT_TEMPLATE } from "@/lib/templates";
 
-export default function InvoicePreview({ profile, invoice, currency, t, dir, lang, theme }) {
-  const { subtotal, discountAmount, vat, total } = computeTotals(invoice);
+export default function InvoicePreview({
+  profile,
+  invoice,
+  currency,
+  t,
+  dir,
+  lang,
+  theme,
+  blNumber,
+  poNumber,
+  docType,
+  paymentStatus,
+}) {
+  const { subtotal, discountAmount, vat, total, totalTTC, netToPay, deposit } = computeTotals(invoice);
   const items = invoice.items || [];
   const hasAnyDiscount = items.some((it) => Number(it.discount) > 0);
 
   const legalForm = (profile.legalForm || "").trim();
   const capital = (profile.capital || "").trim();
+
+  const effectiveBl = (blNumber !== undefined ? blNumber : (invoice.blNumber || "")).trim();
+  const effectivePo = (poNumber !== undefined ? poNumber : (invoice.poNumber || "")).trim();
+  const effectiveDocType = docType || invoice.docType || "Facture";
+  const effectiveStatus = paymentStatus || invoice.paymentStatus || "none";
+
+  const getResolvedTitle = (type, l) => {
+    if (l === "fr") {
+      switch (type) {
+        case "Facture": return "FACTURE";
+        case "Devis": return "DEVIS";
+        case "Bon de commande": return "BON DE COMMANDE";
+        case "Avoir": return "AVOIR";
+        default: return (type || "FACTURE").toUpperCase();
+      }
+    }
+    if (l === "en") {
+      switch (type) {
+        case "Facture": return "INVOICE";
+        case "Devis": return "QUOTE";
+        case "Bon de commande": return "PURCHASE ORDER";
+        case "Avoir": return "CREDIT NOTE";
+        default: return (type || "INVOICE").toUpperCase();
+      }
+    }
+    if (l === "ar") {
+      switch (type) {
+        case "Facture": return "فاتورة";
+        case "Devis": return "عرض أسعار";
+        case "Bon de commande": return "طلب شراء";
+        case "Avoir": return "إشعار دائن";
+        default: return type || "فاتورة";
+      }
+    }
+    return (type || "FACTURE").toUpperCase();
+  };
+
+  const getStampConfig = (status, l) => {
+    if (!status || status === "none") return null;
+    switch (status) {
+      case "PAID":
+        return {
+          color: "#16a34a",
+          text: l === "en" ? "PAID" : l === "ar" ? "مدفوعة" : "PAYÉE",
+        };
+      case "PENDING":
+        return {
+          color: "#ea580c",
+          text: l === "en" ? "PENDING" : l === "ar" ? "قيد الانتظار" : "EN ATTENTE",
+        };
+      case "CANCELLED":
+        return {
+          color: "#dc2626",
+          text: l === "en" ? "CANCELLED" : l === "ar" ? "ملغاة" : "ANNULÉE",
+        };
+      default:
+        return null;
+    }
+  };
+
+  const resolvedTitle = getResolvedTitle(effectiveDocType, lang);
+  const stampConfig = getStampConfig(effectiveStatus, lang);
+
+  const effectiveWordsPrefix =
+    lang === "fr"
+      ? effectiveDocType === "Devis"
+        ? "Arrêté le présent devis à la somme de"
+        : effectiveDocType === "Bon de commande"
+        ? "Arrêté le présent bon de commande à la somme de"
+        : effectiveDocType === "Avoir"
+        ? "Arrêté le présent avoir à la somme de"
+        : t.amountWordsPrefix
+      : t.amountWordsPrefix;
 
   const tpl = theme || DEFAULT_TEMPLATE;
   const accent = tpl.accent;
@@ -46,6 +131,49 @@ export default function InvoicePreview({ profile, invoice, currency, t, dir, lan
         />
       ) : null}
 
+      {/* STATUS STAMP OVERLAY */}
+      {stampConfig ? (
+        <div
+          data-testid="preview-status-stamp"
+          style={{
+            position: "absolute",
+            top: "165px",
+            right: dir === "rtl" ? "auto" : "60px",
+            left: dir === "rtl" ? "60px" : "auto",
+            transform: "rotate(-12deg)",
+            transformOrigin: "center",
+            border: `4px solid ${stampConfig.color}`,
+            borderRadius: "8px",
+            padding: "6px 18px",
+            color: stampConfig.color,
+            fontWeight: 900,
+            fontSize: "24px",
+            letterSpacing: "3px",
+            textTransform: "uppercase",
+            backgroundColor: "rgba(255, 255, 255, 0.88)",
+            boxShadow: `0 0 0 2px ${stampConfig.color}22`,
+            pointerEvents: "none",
+            zIndex: 25,
+            userSelect: "none",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              border: `2px dashed ${stampConfig.color}`,
+              borderRadius: "4px",
+              padding: "4px 14px",
+              lineHeight: 1.1,
+              textAlign: "center",
+            }}
+          >
+            {stampConfig.text}
+          </div>
+        </div>
+      ) : null}
+
       {/* HEADER */}
       <div
         style={
@@ -77,8 +205,11 @@ export default function InvoicePreview({ profile, invoice, currency, t, dir, lan
           </div>
 
           <div style={{ textAlign: "end", minWidth: "40%" }}>
-            <div style={{ fontSize: "27px", fontWeight: 800, letterSpacing: "3px", color: hTitle, lineHeight: 1 }}>
-              {t.invoiceTitle}
+            <div
+              data-testid="preview-doc-type-title"
+              style={{ fontSize: "27px", fontWeight: 800, letterSpacing: "3px", color: hTitle, lineHeight: 1 }}
+            >
+              {resolvedTitle}
             </div>
             <div style={{ marginTop: "14px", fontSize: "12px", color: hBody, lineHeight: 1.8 }}>
               <div>
@@ -89,10 +220,24 @@ export default function InvoicePreview({ profile, invoice, currency, t, dir, lan
                 <span style={{ color: hMuted }}>{t.issueDate}: </span>
                 <span style={{ fontWeight: 600 }}><Ltr>{formatDate(invoice.date)}</Ltr></span>
               </div>
-              <div>
-                <span style={{ color: hMuted }}>{t.dueDate}: </span>
-                <span style={{ fontWeight: 600 }}><Ltr>{formatDate(invoice.dueDate)}</Ltr></span>
-              </div>
+              {invoice.dueDate && String(invoice.dueDate).trim() ? (
+                <div data-testid="preview-due-date">
+                  <span style={{ color: hMuted }}>{t.dueDate}: </span>
+                  <span style={{ fontWeight: 600 }}><Ltr>{formatDate(invoice.dueDate)}</Ltr></span>
+                </div>
+              ) : null}
+              {effectiveBl ? (
+                <div data-testid="preview-bl-number">
+                  <span style={{ color: hMuted }}>{t.blNumberShort || "N° BL"}: </span>
+                  <span style={{ fontWeight: 600 }}><Ltr>{effectiveBl}</Ltr></span>
+                </div>
+              ) : null}
+              {effectivePo ? (
+                <div data-testid="preview-po-number">
+                  <span style={{ color: hMuted }}>{t.poNumberShort || "N° BC"}: </span>
+                  <span style={{ fontWeight: 600 }}><Ltr>{effectivePo}</Ltr></span>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
@@ -185,24 +330,77 @@ export default function InvoicePreview({ profile, invoice, currency, t, dir, lan
           muted={muted}
           testid="preview-tax-amount"
         />
-        <div
-          data-testid="preview-total-ttc"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginTop: "8px",
-            padding: "12px 14px",
-            borderRadius: "8px",
-            background: tpl.totalsBg,
-            border: `1px solid ${tpl.totalsBorder}`,
-          }}
-        >
-          <span style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.5px", color: tpl.totalsColor, textTransform: "uppercase" }}>
-            {t.totalTTC}
-          </span>
-          <span style={{ fontSize: "17px", fontWeight: 800, color: tpl.totalsAmountColor }}><Ltr>{formatMoney(total, currency, lang)}</Ltr></span>
-        </div>
+        {deposit > 0 ? (
+          <>
+            <div
+              data-testid="preview-total-ttc"
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                padding: "6px 2px",
+                fontSize: "12px",
+                borderTop: `1px solid ${border}`,
+                marginTop: "6px",
+                paddingTop: "8px",
+              }}
+            >
+              <span style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.5px", color: "#1e293b", textTransform: "uppercase" }}>
+                {t.totalTTC}
+              </span>
+              <span style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>
+                <Ltr>{formatMoney(total, currency, lang)}</Ltr>
+              </span>
+            </div>
+            <div style={{ padding: "2px 0" }}>
+              <Row
+                label={t.deposit || "Acompte versé"}
+                value={<Ltr>{`- ${formatMoney(deposit, currency, lang)}`}</Ltr>}
+                testid="preview-deposit-amount"
+              />
+            </div>
+            <div
+              data-testid="preview-net-to-pay"
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: "8px",
+                padding: "12px 14px",
+                borderRadius: "8px",
+                background: tpl.totalsBg,
+                border: `1px solid ${tpl.totalsBorder}`,
+              }}
+            >
+              <span style={{ fontSize: "12px", fontWeight: 800, letterSpacing: "0.5px", color: tpl.totalsColor, textTransform: "uppercase" }}>
+                {t.netToPay || "Reste à payer"}
+              </span>
+              <span style={{ fontSize: "17px", fontWeight: 800, color: tpl.totalsAmountColor }}>
+                <Ltr>{formatMoney(netToPay, currency, lang)}</Ltr>
+              </span>
+            </div>
+          </>
+        ) : (
+          <div
+            data-testid="preview-total-ttc"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginTop: "8px",
+              padding: "12px 14px",
+              borderRadius: "8px",
+              background: tpl.totalsBg,
+              border: `1px solid ${tpl.totalsBorder}`,
+            }}
+          >
+            <span style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.5px", color: tpl.totalsColor, textTransform: "uppercase" }}>
+              {t.totalTTC}
+            </span>
+            <span style={{ fontSize: "17px", fontWeight: 800, color: tpl.totalsAmountColor }}>
+              <Ltr>{formatMoney(total, currency, lang)}</Ltr>
+            </span>
+          </div>
+        )}
       </div>
 
       {/* AMOUNT IN WORDS */}
@@ -221,7 +419,7 @@ export default function InvoicePreview({ profile, invoice, currency, t, dir, lan
           fontStyle: lang === "ar" ? "normal" : "italic",
         }}
       >
-        {amountInWordsSentence(total, lang, currency, t.amountWordsPrefix)}
+        {amountInWordsSentence(total, lang, currency, effectiveWordsPrefix)}
       </div>
 
       {/* FOOTER */}

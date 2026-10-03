@@ -52,6 +52,10 @@ export default function InvoiceApp() {
   const [templateId, setTemplateId] = useState(() => loadLS(STORAGE_KEYS.template, "classic"));
   const [profile, setProfile] = useState(() => loadLS(STORAGE_KEYS.profile, DEFAULT_PROFILE));
   const [invoice, setInvoice] = useState(() => loadLS(STORAGE_KEYS.invoice, makeEmptyInvoice()));
+  const [docType, setDocType] = useState(() => invoice.docType || loadLS(STORAGE_KEYS.docType, "Facture"));
+  const [blNumber, setBlNumber] = useState(() => invoice.blNumber || loadLS(STORAGE_KEYS.blNumber, ""));
+  const [poNumber, setPoNumber] = useState(() => invoice.poNumber || loadLS(STORAGE_KEYS.poNumber, ""));
+  const [paymentStatus, setPaymentStatus] = useState(() => invoice.paymentStatus || loadLS(STORAGE_KEYS.paymentStatus, "none"));
   const [history, setHistory] = useState(() => loadLS(STORAGE_KEYS.history, []));
   const [historyOpen, setHistoryOpen] = useState(false);
 
@@ -87,6 +91,10 @@ export default function InvoiceApp() {
   // ---- persistence ----
   useEffect(() => saveLS(STORAGE_KEYS.profile, profile), [profile]);
   useEffect(() => saveLS(STORAGE_KEYS.invoice, invoice), [invoice]);
+  useEffect(() => saveLS(STORAGE_KEYS.docType, docType), [docType]);
+  useEffect(() => saveLS(STORAGE_KEYS.blNumber, blNumber), [blNumber]);
+  useEffect(() => saveLS(STORAGE_KEYS.poNumber, poNumber), [poNumber]);
+  useEffect(() => saveLS(STORAGE_KEYS.paymentStatus, paymentStatus), [paymentStatus]);
   useEffect(() => saveLS(STORAGE_KEYS.lang, lang), [lang]);
   useEffect(() => saveLS(STORAGE_KEYS.currency, currency), [currency]);
   useEffect(() => saveLS(STORAGE_KEYS.template, templateId), [templateId]);
@@ -156,6 +164,26 @@ export default function InvoiceApp() {
     reader.readAsDataURL(file);
   };
   const removeLogo = () => updateProfile("logo", "");
+
+  const handleDocTypeChange = (val) => {
+    setDocType(val);
+    setInvoice((i) => ({ ...i, docType: val }));
+  };
+
+  const handleBlNumberChange = (val) => {
+    setBlNumber(val);
+    setInvoice((i) => ({ ...i, blNumber: val }));
+  };
+
+  const handlePoNumberChange = (val) => {
+    setPoNumber(val);
+    setInvoice((i) => ({ ...i, poNumber: val }));
+  };
+
+  const handlePaymentStatusChange = (val) => {
+    setPaymentStatus(val);
+    setInvoice((i) => ({ ...i, paymentStatus: val }));
+  };
 
   // ---- history ----
   const upsertHistory = useCallback(
@@ -232,13 +260,18 @@ export default function InvoiceApp() {
   };
 
   const handleSaveInvoice = () => {
-    upsertHistory(invoice, currency);
+    upsertHistory({ ...invoice, docType, blNumber, poNumber, paymentStatus }, currency);
     toast.success(t.saved);
   };
 
   const handleReopen = (entry) => {
-    setInvoice(JSON.parse(JSON.stringify(entry.invoice)));
+    const inv = JSON.parse(JSON.stringify(entry.invoice));
+    setInvoice(inv);
     setCurrency(entry.currency);
+    setDocType(inv.docType || "Facture");
+    setBlNumber(inv.blNumber || "");
+    setPoNumber(inv.poNumber || "");
+    setPaymentStatus(inv.paymentStatus || "none");
     setHistoryOpen(false);
     toast.success(t.reopened);
   };
@@ -250,6 +283,10 @@ export default function InvoiceApp() {
     const dup = duplicateInvoice(entry.invoice, newNumber);
     setInvoice(dup);
     setCurrency(entry.currency);
+    setDocType(dup.docType || "Facture");
+    setBlNumber(dup.blNumber || "");
+    setPoNumber(dup.poNumber || "");
+    setPaymentStatus("none");
     setHistoryOpen(false);
     toast.success(t.duplicated);
   };
@@ -260,8 +297,11 @@ export default function InvoiceApp() {
   };
 
   const handleNewInvoice = () => {
-    upsertHistory(invoice, currency);
+    upsertHistory({ ...invoice, docType, blNumber, poNumber, paymentStatus }, currency);
     setInvoice(makeEmptyInvoice(nextInvoiceNumber(invoice.number)));
+    setBlNumber("");
+    setPoNumber("");
+    setPaymentStatus("none");
     toast.success(t.tNew);
   };
 
@@ -272,6 +312,10 @@ export default function InvoiceApp() {
     setHistory([]);
     setCurrency("DZD");
     setLang("fr");
+    setDocType("Facture");
+    setBlNumber("");
+    setPoNumber("");
+    setPaymentStatus("none");
     toast.success(t.tReset);
   };
 
@@ -283,17 +327,18 @@ export default function InvoiceApp() {
     if (!innerRef.current || exporting) return;
     setExporting(true);
     try {
+      const docPrefix = (docType || "facture").toLowerCase().replace(/\s+/g, "_");
       await html2pdf()
         .set({
           margin: 0,
-          filename: `${invoice.number || "facture"}.pdf`,
+          filename: `${docPrefix}_${invoice.number || "001"}.pdf`,
           image: { type: "jpeg", quality: 0.98 },
           html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff", windowWidth: A4_WIDTH_PX },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
         })
         .from(innerRef.current)
         .save();
-      upsertHistory(invoice, currency);
+      upsertHistory({ ...invoice, docType, blNumber, poNumber, paymentStatus }, currency);
       toast.success(t.tPdf);
     } catch (e) {
       toast.error(t.tPdfErr);
@@ -302,15 +347,16 @@ export default function InvoiceApp() {
     }
   };
 
-const handleDownloadPdf = () => {
-  setAdAction('download');
-  setAdOpen(true);
-};
+  const handleDownloadPdf = () => {
+    setAdAction('download');
+    setAdOpen(true);
+  };
 
-const handlePrint = () => {
-  setAdAction('print');
-  setAdOpen(true);
-};
+  const handlePrint = () => {
+    upsertHistory({ ...invoice, docType, blNumber, poNumber, paymentStatus }, currency);
+    setAdAction('print');
+    setAdOpen(true);
+  };
 
   return (
     <div dir={dir} className="min-h-screen bg-[#0b0d14] text-slate-200">
@@ -505,6 +551,14 @@ const handlePrint = () => {
             removeItem={removeItem}
             onLogoUpload={onLogoUpload}
             removeLogo={removeLogo}
+            docType={docType}
+            onDocTypeChange={handleDocTypeChange}
+            blNumber={blNumber}
+            poNumber={poNumber}
+            onBlNumberChange={handleBlNumberChange}
+            onPoNumberChange={handlePoNumberChange}
+            paymentStatus={paymentStatus}
+            onPaymentStatusChange={handlePaymentStatusChange}
           />
         </div>
 
@@ -523,7 +577,19 @@ const handlePrint = () => {
               style={{ transform: `scale(${scaleBox.scale})`, transformOrigin: "top left", width: `${A4_WIDTH_PX}px` }}
             >
               <div ref={innerRef}>
-                <InvoicePreview profile={profile} invoice={invoice} currency={currency} t={t} dir={dir} lang={lang} theme={theme} />
+                <InvoicePreview
+                  profile={profile}
+                  invoice={invoice}
+                  currency={currency}
+                  t={t}
+                  dir={dir}
+                  lang={lang}
+                  theme={theme}
+                  docType={docType}
+                  blNumber={blNumber}
+                  poNumber={poNumber}
+                  paymentStatus={paymentStatus}
+                />
               </div>
             </div>
           </div>
