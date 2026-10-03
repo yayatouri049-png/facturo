@@ -13,6 +13,8 @@ import {
 import {
   Building2,
   User,
+  UserPlus,
+  BookUser,
   FileText,
   ListPlus,
   Percent,
@@ -22,6 +24,8 @@ import {
   Plus,
   ImageOff,
 } from "lucide-react";
+import { toast } from "sonner";
+import { useClients } from "@/hooks/useClients";
 import { formatMoney, lineTotal, computeTotals, plusDaysISO } from "@/lib/invoiceUtils";
 
 const DOC_TYPES = ["Facture", "Devis", "Bon de commande", "Avoir"];
@@ -86,6 +90,48 @@ export default function InvoiceForm({
   paymentStatus,
   onPaymentStatusChange,
 }) {
+  const { clients, addClient } = useClients({ t, lang });
+
+  const handleSelectClientFromBook = (clientId) => {
+    const selected = clients.find((c) => c.id === clientId);
+    if (!selected) return;
+
+    // Injection par COPIE INDÉPENDANTE par valeur dans la facture active
+    updateInvoice("client", {
+      name: selected.name || "",
+      address: selected.address || "",
+      phone: selected.phone || "",
+      email: selected.email || "",
+      nif: selected.nif || "",
+      nis: selected.nis || "",
+      rc: selected.rc || "",
+      ai: selected.ai || "",
+    });
+    toast.success(t.clientSelected || "Coordonnées du client appliquées");
+  };
+
+  const handleSaveClientToBook = () => {
+    const rawName = invoice.client?.name;
+    const name = typeof rawName === "string" ? rawName.trim() : "";
+    if (!name) {
+      toast.error(t.clientNameRequired || "Le nom du client est obligatoire.");
+      return;
+    }
+    const created = addClient({
+      name,
+      address: invoice.client.address || "",
+      phone: invoice.client.phone || "",
+      email: invoice.client.email || "",
+      nif: invoice.client.nif || "",
+      nis: invoice.client.nis || "",
+      rc: invoice.client.rc || "",
+      ai: invoice.client.ai || "",
+    });
+    if (created) {
+      toast.success(t.clientSavedToBook || "Client enregistré dans votre carnet");
+    }
+  };
+
   return (
     <div className="space-y-5">
       {/* TYPE DE DOCUMENT & STATUT DE PAIEMENT */}
@@ -241,6 +287,38 @@ export default function InvoiceForm({
 
       {/* CLIENT */}
       <Section icon={User} title={t.client} hint={t.clientHint} accent="#0098f2">
+        {/* Menu déroulant listant les clients enregistrés */}
+        {clients.length > 0 && (
+          <div className="space-y-1.5 pb-2 border-b border-[#282e42]/60">
+            <Label className="text-[11px] font-medium uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
+              <BookUser className="h-3.5 w-3.5" />
+              {t.selectClientFromBook || "Charger depuis le carnet"}
+            </Label>
+            <Select onValueChange={handleSelectClientFromBook}>
+              <SelectTrigger
+                data-testid="client-book-select"
+                className="bg-[#0e1220] border-[#282e42] text-slate-200 h-9 text-xs focus:ring-blue-500"
+              >
+                <SelectValue placeholder={t.selectClientPlaceholder || "Sélectionner un client du carnet..."} />
+              </SelectTrigger>
+              <SelectContent className="border-[#282e42] bg-[#141826] text-slate-200 max-h-60">
+                {clients.map((c) => (
+                  <SelectItem key={c.id} value={c.id} className="text-xs focus:bg-[#1f2638] focus:text-white">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-white">{c.name}</span>
+                      {c.nif && (
+                        <span className="text-[11px] text-slate-400">
+                          (NIF: <bdi dir="ltr">{c.nif}</bdi>)
+                        </span>
+                      )}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
         <Field label={t.clientName}>
           <Input
             data-testid="client-name-input"
@@ -282,6 +360,23 @@ export default function InvoiceForm({
             <Input data-testid="client-ai-input" className={inputCls} value={invoice.client.ai || ""} onChange={(e) => updateClient("ai", e.target.value)} />
           </Field>
         </div>
+
+        {/* Bouton discret pour enregistrer le client saisi manuellement */}
+        {invoice.client.name?.trim() && (
+          <div className="flex justify-end pt-2 border-t border-[#282e42]/60">
+            <Button
+              type="button"
+              data-testid="save-client-to-book-btn"
+              variant="ghost"
+              size="sm"
+              onClick={handleSaveClientToBook}
+              className="h-7 text-xs text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 border border-blue-500/30 rounded-lg px-2.5 flex items-center gap-1.5 transition-colors"
+            >
+              <UserPlus className="h-3.5 w-3.5" />
+              <span>{t.saveClientToBook || "Enregistrer ce client dans mon carnet"}</span>
+            </Button>
+          </div>
+        )}
       </Section>
 
       {/* DETAILS */}

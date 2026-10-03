@@ -9,22 +9,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Download, Printer, FilePlus2, RotateCcw, Languages, Save, History, Palette } from "lucide-react";
+import { Download, Printer, FilePlus2, RotateCcw, Languages, Save, History, Palette, Users } from "lucide-react";
 import InvoiceForm from "@/components/InvoiceForm";
 import InvoicePreview from "@/components/InvoicePreview";
 import RewardedAdDialog from "@/components/RewardedAdDialog";
 import InvoiceHistory from "@/components/InvoiceHistory";
+import ClientsDrawer from "@/components/ClientsDrawer";
+import { useClients } from "@/hooks/useClients";
 import { translations, LANGUAGES } from "@/lib/translations";
 import { TEMPLATES, getTemplate } from "@/lib/templates";
 import {
@@ -32,7 +23,6 @@ import {
   STORAGE_KEYS,
   loadLS,
   saveLS,
-  clearAllLS,
   DEFAULT_PROFILE,
   makeDefaultInvoice,
   makeEmptyInvoice,
@@ -58,6 +48,20 @@ export default function InvoiceApp() {
   const [paymentStatus, setPaymentStatus] = useState(() => invoice.paymentStatus || loadLS(STORAGE_KEYS.paymentStatus, "none"));
   const [history, setHistory] = useState(() => loadLS(STORAGE_KEYS.history, []));
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [clientsOpen, setClientsOpen] = useState(false);
+
+  const t = translations[lang] || translations.fr;
+  const dir = t.dir;
+  const theme = getTemplate(templateId);
+
+  const {
+    clients,
+    addClient,
+    updateClient: updateClientInBook,
+    deleteClient: deleteClientFromBook,
+    exportClients,
+    importClients,
+  } = useClients({ t, lang });
 
   // Compteur global de factures générées
   const [globalCount, setGlobalCount] = useState(null);
@@ -83,10 +87,6 @@ export default function InvoiceApp() {
       })
       .catch(() => {});
   };
-
-  const t = translations[lang];
-  const dir = t.dir;
-  const theme = getTemplate(templateId);
 
   // ---- persistence ----
   useEffect(() => saveLS(STORAGE_KEYS.profile, profile), [profile]);
@@ -296,6 +296,24 @@ export default function InvoiceApp() {
     toast.success(t.deletedInvoice);
   };
 
+  const handleSelectClientFromDrawer = (client) => {
+    // Injection par COPIE INDÉPENDANTE par valeur
+    setInvoice((prev) => ({
+      ...prev,
+      client: {
+        name: client.name || "",
+        address: client.address || "",
+        phone: client.phone || "",
+        email: client.email || "",
+        nif: client.nif || "",
+        nis: client.nis || "",
+        rc: client.rc || "",
+        ai: client.ai || "",
+      },
+    }));
+    toast.success(t.clientSelected || "Coordonnées du client appliquées");
+  };
+
   const handleNewInvoice = () => {
     upsertHistory({ ...invoice, docType, blNumber, poNumber, paymentStatus }, currency);
     setInvoice(makeEmptyInvoice(nextInvoiceNumber(invoice.number)));
@@ -305,17 +323,23 @@ export default function InvoiceApp() {
     toast.success(t.tNew);
   };
 
+  /**
+   * Réinitialise uniquement les coordonnées du profil émetteur dans le localStorage et l'état.
+   * Ne supprime jamais l'historique des factures, ni les fiches clients, ni les factures en cours.
+   */
   const handleResetProfile = () => {
-    clearAllLS();
+    const message =
+      t.confirmResetProfile ||
+      "Voulez-vous vraiment réinitialiser les coordonnées de votre entreprise ? (Vos fiches clients et votre historique de factures seront conservés).";
+    if (!window.confirm(message)) {
+      return;
+    }
+    try {
+      localStorage.removeItem(STORAGE_KEYS.profile);
+    } catch {
+      /* quota / mode navigation privée */
+    }
     setProfile(DEFAULT_PROFILE);
-    setInvoice(makeDefaultInvoice());
-    setHistory([]);
-    setCurrency("DZD");
-    setLang("fr");
-    setDocType("Facture");
-    setBlNumber("");
-    setPoNumber("");
-    setPaymentStatus("none");
     toast.success(t.tReset);
   };
 
@@ -440,6 +464,24 @@ export default function InvoiceApp() {
             </div>
 
             <Button
+              data-testid="clients-drawer-button"
+              onClick={() => setClientsOpen(true)}
+              variant="outline"
+              className="relative h-9 border-[#282e42] bg-[#141826] text-blue-200 hover:text-white hover:bg-blue-500/10 hover:border-blue-500/50"
+            >
+              <Users className="h-4 w-4 sm:mr-2 text-blue-400" />
+              <span className="hidden sm:inline">{t.clientsTitle || "Clients"}</span>
+              {clients.length > 0 && (
+                <span
+                  data-testid="clients-count-badge"
+                  className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-blue-600 px-1 text-[10px] font-bold text-white"
+                >
+                  {clients.length}
+                </span>
+              )}
+            </Button>
+
+            <Button
               data-testid="history-button"
               onClick={() => setHistoryOpen(true)}
               variant="outline"
@@ -477,36 +519,15 @@ export default function InvoiceApp() {
               <span className="hidden sm:inline">{t.newInvoice}</span>
             </Button>
 
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  data-testid="reset-profile-button"
-                  variant="outline"
-                  className="h-9 border-[#3a2130] bg-[#1a1220] text-red-300 hover:bg-red-500/10 hover:text-red-200"
-                >
-                  <RotateCcw className="h-4 w-4 sm:mr-2" />
-                  <span className="hidden sm:inline">{t.resetProfile}</span>
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="border-[#282e42] bg-[#141826] text-slate-200">
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="text-white">{t.resetProfile}</AlertDialogTitle>
-                  <AlertDialogDescription className="text-slate-400">{t.confirmReset}</AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel className="border-[#282e42] bg-transparent text-slate-200 hover:bg-[#1a2030] hover:text-white">
-                    ✕
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    data-testid="confirm-reset-button"
-                    onClick={handleResetProfile}
-                    className="bg-red-600 text-white hover:bg-red-500"
-                  >
-                    {t.resetProfile}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <Button
+              data-testid="reset-profile-button"
+              onClick={handleResetProfile}
+              variant="outline"
+              className="h-9 border-[#3a2130] bg-[#1a1220] text-red-300 hover:bg-red-500/10 hover:text-red-200"
+            >
+              <RotateCcw className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">{t.resetProfile}</span>
+            </Button>
 
             <Button
               data-testid="print-invoice-button"
@@ -625,6 +646,21 @@ export default function InvoiceApp() {
         onToggleStatus={toggleStatus}
         onExport={exportHistory}
         onImport={importHistory}
+      />
+
+      <ClientsDrawer
+        open={clientsOpen}
+        onOpenChange={setClientsOpen}
+        clients={clients}
+        t={t}
+        dir={dir}
+        lang={lang}
+        onSelectClient={handleSelectClientFromDrawer}
+        onAddClient={addClient}
+        onUpdateClient={updateClientInBook}
+        onDeleteClient={deleteClientFromBook}
+        onExport={exportClients}
+        onImport={importClients}
       />
       {/* Liens légaux AdSense */}
      <footer className="mt-12 py-6 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col items-center gap-3">

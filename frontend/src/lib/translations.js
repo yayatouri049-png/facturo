@@ -114,7 +114,10 @@ export const translations = {
     tPdfErr: "Erreur lors de la génération du PDF",
     tNew: "Nouvelle facture prête",
     tReset: "Profil réinitialisé",
-    confirmReset: "Voulez-vous vraiment tout effacer et réinitialiser le profil ?",
+    confirmReset:
+      "Voulez-vous vraiment réinitialiser les coordonnées de votre entreprise ? (Vos fiches clients et votre historique de factures seront conservés).",
+    confirmResetProfile:
+      "Voulez-vous vraiment réinitialiser les coordonnées de votre entreprise ? (Vos fiches clients et votre historique de factures seront conservés).",
     thankYou: "Merci pour votre confiance.",
     // rewarded ad
     adTitle: "Téléchargement gratuit de votre facture",
@@ -155,6 +158,26 @@ export const translations = {
     exportSuccess: "Sauvegarde exportée",
     importSuccess: "Sauvegarde importée",
     importError: "Fichier de sauvegarde invalide",
+    // Carnet clients
+    clientsTitle: "Carnet clients",
+    clientsSubtitle: "Gérez vos fiches clients et réutilisez-les dans vos factures.",
+    clientsSearchPlaceholder: "Rechercher par nom ou NIF...",
+    newClient: "Nouveau client",
+    editClient: "Modifier le client",
+    createDocumentForClient: "Créer un document",
+    clientsEmptyTitle: "Votre carnet est vide",
+    clientsEmptySubtitle: "Enregistrez vos clients pour remplir vos prochaines factures en un seul clic.",
+    addFirstClient: "Ajouter un premier client",
+    confirmDeleteClient: "Voulez-vous vraiment supprimer ce client du carnet ?",
+    selectClientPlaceholder: "Sélectionner un client du carnet...",
+    selectClientFromBook: "Charger depuis le carnet",
+    saveClientToBook: "Enregistrer ce client dans mon carnet",
+    clientSavedToBook: "Client enregistré dans votre carnet",
+    clientSelected: "Coordonnées du client appliquées",
+    clientNameRequired: "Le nom du client est obligatoire.",
+    noClientsInBook: "Aucun client enregistré dans le carnet",
+    clientBackupBanner:
+      "Conseil important : vos données sont conservées dans ce navigateur. Ne supprimez pas les cookies et données de navigation de ce site, sous peine d'effacer vos clients et factures. Le bouton Exporter ci-dessus sauvegarde uniquement vos clients (l'historique de vos factures s'exporte séparément depuis le panneau Historique).",
   },
   en: {
     dir: "ltr",
@@ -260,7 +283,10 @@ export const translations = {
     tPdfErr: "Error generating PDF",
     tNew: "New invoice ready",
     tReset: "Profile reset",
-    confirmReset: "Do you really want to clear everything and reset the profile?",
+    confirmReset:
+      "Are you sure you want to reset your company details? (Your client cards and invoice history will be kept).",
+    confirmResetProfile:
+      "Are you sure you want to reset your company details? (Your client cards and invoice history will be kept).",
     thankYou: "Thank you for your business.",
     adTitle: "Free download of your invoice",
     adMessage:
@@ -299,6 +325,26 @@ export const translations = {
     exportSuccess: "Backup exported",
     importSuccess: "Backup imported",
     importError: "Invalid backup file",
+    // Client address book
+    clientsTitle: "Client address book",
+    clientsSubtitle: "Manage your client cards and reuse them across your invoices.",
+    clientsSearchPlaceholder: "Search by name or Tax ID...",
+    newClient: "New client",
+    editClient: "Edit client",
+    createDocumentForClient: "Create document",
+    clientsEmptyTitle: "Your address book is empty",
+    clientsEmptySubtitle: "Save your clients to fill in your next invoices in just one click.",
+    addFirstClient: "Add first client",
+    confirmDeleteClient: "Are you sure you want to delete this client from the address book?",
+    selectClientPlaceholder: "Select a client from address book...",
+    selectClientFromBook: "Load from address book",
+    saveClientToBook: "Save this client to my address book",
+    clientSavedToBook: "Client saved to address book",
+    clientSelected: "Client details applied",
+    clientNameRequired: "Client name is required.",
+    noClientsInBook: "No clients saved in address book",
+    clientBackupBanner:
+      "Important tip: your data is stored in this browser. Do not clear cookies or browsing data for this site, as this will erase your clients and invoices. The Export button above backs up your clients only (invoice history is exported separately from the History panel).",
   },
   ar: {
     dir: "rtl",
@@ -404,7 +450,10 @@ export const translations = {
     tPdfErr: "خطأ أثناء إنشاء PDF",
     tNew: "الفاتورة الجديدة جاهزة",
     tReset: "تمت إعادة تعيين الملف",
-    confirmReset: "هل تريد حقًا مسح كل شيء وإعادة تعيين الملف؟",
+    confirmReset:
+      "هل تريد حقًا إعادة تعيين بيانات شركتك؟ (سيتم الاحتفاظ ببطاقات العملاء وسجل الفواتير).",
+    confirmResetProfile:
+      "هل تريد حقًا إعادة تعيين بيانات شركتك؟ (سيتم الاحتفاظ ببطاقات العملاء وسجل الفواتير).",
     thankYou: "شكرًا لثقتكم بنا.",
     adTitle: "تنزيل فاتورتك مجانًا",
     adMessage: "شاهد إعلان فيديو قصير لفتح فاتورتك بصيغة PDF عالية الدقة فورًا.",
@@ -442,5 +491,25 @@ export const translations = {
     exportSuccess: "تم تصدير النسخة الاحتياطية",
     importSuccess: "تم استيراد النسخة الاحتياطية",
     importError: "ملف النسخة الاحتياطية غير صالح",
+    // دفتر العملاء
+    clientsTitle: "دفتر العملاء",
+    clientsSubtitle: "إدارة بطاقات عملائك وإعادة استخدامها في فواتيرك.",
+    clientsSearchPlaceholder: "ابحث بالاسم أو الرقم الضريبي...",
+    newClient: "عميل جديد",
+    editClient: "تعديل العميل",
+    createDocumentForClient: "إنشاء وثيقة",
+    clientsEmptyTitle: "دفتر العملاء فارغ",
+    clientsEmptySubtitle: "احفظ بيانات عملائك لملء فواتيرك القادمة بنقرة واحدة.",
+    addFirstClient: "إضافة أول عميل",
+    confirmDeleteClient: "هل تريد حقًا حذف هذا العميل من دفتر العناوين؟",
+    selectClientPlaceholder: "اختر عميلاً من الدفتر...",
+    selectClientFromBook: "تحميل من دفتر العناوين",
+    saveClientToBook: "حفظ هذا العميل في الدفتر",
+    clientSavedToBook: "تم حفظ العميل في دفتر العناوين",
+    clientSelected: "تم تطبيق بيانات العميل",
+    clientNameRequired: "اسم العميل مطلوب.",
+    noClientsInBook: "لا يوجد عملاء محفوظون في الدفتر",
+    clientBackupBanner:
+      "نصيحة هامة: يتم حفظ بياناتك في هذا المتصفح. لا تحذف ملفات تعريف الارتباط وبيانات التصفح لهذا الموقع، وإلا سيتم مسح بيانات عملائك وفواتيرك. يقوم زر التصدير أعلاه بحفظ بطاقات عملائك فقط (يتم تصدير سجل الفواتير بشكل منفصل من لوحة السجل).",
   },
 };
