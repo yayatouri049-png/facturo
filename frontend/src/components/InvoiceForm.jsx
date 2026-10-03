@@ -28,7 +28,7 @@ const DOC_TYPES = ["Facture", "Devis", "Bon de commande", "Avoir"];
 
 const STATUS_OPTIONS = [
   { id: "none", labelKey: "stampNone", labelDefault: "Aucun", activeCls: "bg-slate-700 text-white ring-1 ring-slate-400 shadow-md" },
-  { id: "PAID", labelKey: "stampPaid", labelDefault: "Payée", activeCls: "bg-emerald-600 text-white ring-1 ring-emerald-400 shadow-lg shadow-emerald-600/30" },
+  { id: "PAID", labelKey: "stampPaid", labelDefault: "PAYÉE", activeCls: "bg-emerald-600 text-white ring-1 ring-emerald-400 shadow-lg shadow-emerald-600/30" },
   { id: "PENDING", labelKey: "stampPending", labelDefault: "En attente", activeCls: "bg-amber-600 text-white ring-1 ring-amber-400 shadow-lg shadow-amber-600/30" },
   { id: "CANCELLED", labelKey: "stampCancelled", labelDefault: "Annulée", activeCls: "bg-rose-600 text-white ring-1 ring-rose-400 shadow-lg shadow-rose-600/30" },
 ];
@@ -136,7 +136,8 @@ export default function InvoiceForm({
                   type="button"
                   data-testid={testId}
                   onClick={() => onPaymentStatusChange(opt.id)}
-                  className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  translate="no"
+                  className={`notranslate flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
                     active
                       ? opt.activeCls
                       : "border border-[#282e42] bg-[#0e1220] text-slate-400 hover:bg-[#1a2030] hover:text-white"
@@ -212,9 +213,14 @@ export default function InvoiceForm({
             <Input className={inputCls} value={profile.email} onChange={(e) => updateProfile("email", e.target.value)} />
           </Field>
         </div>
-        <Field label={t.taxId}>
-          <Input data-testid="emitter-nif-input" className={inputCls} value={profile.taxId} onChange={(e) => updateProfile("taxId", e.target.value)} />
-        </Field>
+        <div className="grid grid-cols-2 gap-4">
+          <Field label={t.taxId}>
+            <Input data-testid="emitter-nif-input" className={inputCls} value={profile.taxId || ""} onChange={(e) => updateProfile("taxId", e.target.value)} />
+          </Field>
+          <Field label={t.nis}>
+            <Input data-testid="emitter-nis-input" className={inputCls} value={profile.nis || ""} onChange={(e) => updateProfile("nis", e.target.value)} />
+          </Field>
+        </div>
         <div className="grid grid-cols-2 gap-4">
           <Field label={t.rc}>
             <Input data-testid="emitter-rc-input" className={inputCls} value={profile.rc || ""} onChange={(e) => updateProfile("rc", e.target.value)} />
@@ -264,13 +270,18 @@ export default function InvoiceForm({
           <Field label={t.clientNif}>
             <Input data-testid="client-nif-input" className={inputCls} value={invoice.client.nif || ""} onChange={(e) => updateClient("nif", e.target.value)} />
           </Field>
+          <Field label={t.clientNis}>
+            <Input data-testid="client-nis-input" className={inputCls} value={invoice.client.nis || ""} onChange={(e) => updateClient("nis", e.target.value)} />
+          </Field>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
           <Field label={t.clientRc}>
             <Input data-testid="client-rc-input" className={inputCls} value={invoice.client.rc || ""} onChange={(e) => updateClient("rc", e.target.value)} />
           </Field>
+          <Field label={t.clientAi}>
+            <Input data-testid="client-ai-input" className={inputCls} value={invoice.client.ai || ""} onChange={(e) => updateClient("ai", e.target.value)} />
+          </Field>
         </div>
-        <Field label={t.clientAi}>
-          <Input data-testid="client-ai-input" className={inputCls} value={invoice.client.ai || ""} onChange={(e) => updateClient("ai", e.target.value)} />
-        </Field>
       </Section>
 
       {/* DETAILS */}

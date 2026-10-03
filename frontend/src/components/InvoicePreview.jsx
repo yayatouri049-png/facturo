@@ -115,7 +115,7 @@ export default function InvoicePreview({
       dir={dir}
       data-testid="a4-invoice-preview"
       className="a4-shadow"
-      style={{ padding: "40px", position: "relative" }}
+      style={{ padding: "40px 40px 220px 40px", position: "relative" }}
     >
       {/* top gradient accent bar */}
       {tpl.topBar && !band ? (
@@ -131,48 +131,6 @@ export default function InvoicePreview({
         />
       ) : null}
 
-      {/* STATUS STAMP OVERLAY */}
-      {stampConfig ? (
-        <div
-          data-testid="preview-status-stamp"
-          style={{
-            position: "absolute",
-            top: "165px",
-            right: dir === "rtl" ? "auto" : "60px",
-            left: dir === "rtl" ? "60px" : "auto",
-            transform: "rotate(-12deg)",
-            transformOrigin: "center",
-            border: `4px solid ${stampConfig.color}`,
-            borderRadius: "8px",
-            padding: "6px 18px",
-            color: stampConfig.color,
-            fontWeight: 900,
-            fontSize: "24px",
-            letterSpacing: "3px",
-            textTransform: "uppercase",
-            backgroundColor: "rgba(255, 255, 255, 0.88)",
-            boxShadow: `0 0 0 2px ${stampConfig.color}22`,
-            pointerEvents: "none",
-            zIndex: 25,
-            userSelect: "none",
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <div
-            style={{
-              border: `2px dashed ${stampConfig.color}`,
-              borderRadius: "4px",
-              padding: "4px 14px",
-              lineHeight: 1.1,
-              textAlign: "center",
-            }}
-          >
-            {stampConfig.text}
-          </div>
-        </div>
-      ) : null}
 
       {/* HEADER */}
       <div
@@ -199,6 +157,11 @@ export default function InvoicePreview({
               {profile.phone ? <div><Ltr>{profile.phone}</Ltr></div> : null}
               {profile.email ? <div><Ltr>{profile.email}</Ltr></div> : null}
               {profile.taxId ? <div style={{ color: hMuted }}>{t.nifShort} : <Ltr>{profile.taxId}</Ltr></div> : null}
+              {profile.nis && String(profile.nis).trim() ? (
+                <div data-testid="preview-emitter-nis" style={{ color: hMuted }}>
+                  {t.nisShort} : <Ltr>{profile.nis}</Ltr>
+                </div>
+              ) : null}
               {profile.rc ? <div style={{ color: hMuted }}>{t.rcShort} : <Ltr>{profile.rc}</Ltr></div> : null}
               {profile.ai ? <div style={{ color: hMuted }}>{t.aiShort} : <Ltr>{profile.ai}</Ltr></div> : null}
             </div>
@@ -271,6 +234,9 @@ export default function InvoicePreview({
           {(invoice.client.nif || invoice.client.taxId) ? (
             <div style={{ color: muted }}>{t.nifShort} : <Ltr>{invoice.client.nif || invoice.client.taxId}</Ltr></div>
           ) : null}
+          {invoice.client.nis && String(invoice.client.nis).trim() ? (
+            <div data-testid="preview-client-nis" style={{ color: muted }}>{t.nisShort} : <Ltr>{invoice.client.nis}</Ltr></div>
+          ) : null}
           {invoice.client.rc ? <div style={{ color: muted }}>{t.rcShort} : <Ltr>{invoice.client.rc}</Ltr></div> : null}
           {invoice.client.ai ? <div style={{ color: muted }}>{t.aiShort} : <Ltr>{invoice.client.ai}</Ltr></div> : null}
         </div>
@@ -318,48 +284,130 @@ export default function InvoicePreview({
         </tbody>
       </table>
 
-      {/* TOTALS */}
-      <div style={{ marginTop: "18px", marginInlineStart: "auto", width: "42%" }}>
-        <Row label={t.subtotalHT} value={<Ltr>{formatMoney(subtotal, currency, lang)}</Ltr>} muted={muted} testid="preview-subtotal-ht" />
-        {discountAmount > 0 ? (
-          <Row label={t.discountLabel} value={<Ltr>{`- ${formatMoney(discountAmount, currency, lang)}`}</Ltr>} muted={muted} />
-        ) : null}
-        <Row
-          label={`${t.vatLabel} (${Number(invoice.vatRate) || 0}%)`}
-          value={<Ltr>{formatMoney(vat, currency, lang)}</Ltr>}
-          muted={muted}
-          testid="preview-tax-amount"
-        />
-        {deposit > 0 ? (
-          <>
+      {/* TOTALS & STATUS ROW */}
+      <div
+        style={{
+          marginTop: "18px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          gap: "24px",
+        }}
+      >
+        {/* Status Stamp near Totals (at left of Total TTC in LTR, at right in RTL) */}
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "8px 12px",
+            minHeight: "60px",
+          }}
+        >
+          {stampConfig ? (
             <div
-              data-testid="preview-total-ttc"
+              data-testid="preview-status-stamp"
               style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "6px 2px",
-                fontSize: "12px",
-                borderTop: `1px solid ${border}`,
-                marginTop: "6px",
-                paddingTop: "8px",
+                transform: dir === "rtl" ? "rotate(6deg)" : "rotate(-6deg)",
+                transformOrigin: "center",
+                border: `2.5px dashed ${stampConfig.color}`,
+                borderRadius: "8px",
+                padding: "6px 18px",
+                color: stampConfig.color,
+                fontWeight: 900,
+                fontSize: "18px",
+                letterSpacing: "3px",
+                textTransform: "uppercase",
+                backgroundColor: "rgba(255, 255, 255, 0.94)",
+                boxShadow: `0 1px 6px rgba(0, 0, 0, 0.06), 0 0 0 1px ${stampConfig.color}22`,
+                pointerEvents: "none",
+                userSelect: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: 0.96,
               }}
             >
-              <span style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.5px", color: "#1e293b", textTransform: "uppercase" }}>
-                {t.totalTTC}
-              </span>
-              <span style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>
-                <Ltr>{formatMoney(total, currency, lang)}</Ltr>
-              </span>
+              <div
+                style={{
+                  border: `1px dashed ${stampConfig.color}88`,
+                  borderRadius: "4px",
+                  padding: "3px 12px",
+                  lineHeight: 1.1,
+                  textAlign: "center",
+                }}
+              >
+                {stampConfig.text}
+              </div>
             </div>
-            <div style={{ padding: "2px 0" }}>
-              <Row
-                label={t.deposit || "Acompte versé"}
-                value={<Ltr>{`- ${formatMoney(deposit, currency, lang)}`}</Ltr>}
-                testid="preview-deposit-amount"
-              />
-            </div>
+          ) : null}
+        </div>
+
+        {/* Totals table */}
+        <div style={{ width: "44%", minWidth: "260px", marginInlineStart: "auto" }}>
+          <Row label={t.subtotalHT} value={<Ltr>{formatMoney(subtotal, currency, lang)}</Ltr>} muted={muted} testid="preview-subtotal-ht" />
+          {discountAmount > 0 ? (
+            <Row label={t.discountLabel} value={<Ltr>{`- ${formatMoney(discountAmount, currency, lang)}`}</Ltr>} muted={muted} />
+          ) : null}
+          <Row
+            label={`${t.vatLabel} (${Number(invoice.vatRate) || 0}%)`}
+            value={<Ltr>{formatMoney(vat, currency, lang)}</Ltr>}
+            muted={muted}
+            testid="preview-tax-amount"
+          />
+          {deposit > 0 ? (
+            <>
+              <div
+                data-testid="preview-total-ttc"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  padding: "6px 2px",
+                  fontSize: "12px",
+                  borderTop: `1px solid ${border}`,
+                  marginTop: "6px",
+                  paddingTop: "8px",
+                }}
+              >
+                <span style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.5px", color: "#1e293b", textTransform: "uppercase" }}>
+                  {t.totalTTC}
+                </span>
+                <span style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>
+                  <Ltr>{formatMoney(total, currency, lang)}</Ltr>
+                </span>
+              </div>
+              <div style={{ padding: "2px 0" }}>
+                <Row
+                  label={t.deposit || "Acompte versé"}
+                  value={<Ltr>{`- ${formatMoney(deposit, currency, lang)}`}</Ltr>}
+                  testid="preview-deposit-amount"
+                />
+              </div>
+              <div
+                data-testid="preview-net-to-pay"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginTop: "8px",
+                  padding: "12px 14px",
+                  borderRadius: "8px",
+                  background: tpl.totalsBg,
+                  border: `1px solid ${tpl.totalsBorder}`,
+                }}
+              >
+                <span style={{ fontSize: "12px", fontWeight: 800, letterSpacing: "0.5px", color: tpl.totalsColor, textTransform: "uppercase" }}>
+                  {t.netToPay || "Reste à payer"}
+                </span>
+                <span style={{ fontSize: "17px", fontWeight: 800, color: tpl.totalsAmountColor }}>
+                  <Ltr>{formatMoney(netToPay, currency, lang)}</Ltr>
+                </span>
+              </div>
+            </>
+          ) : (
             <div
-              data-testid="preview-net-to-pay"
+              data-testid="preview-total-ttc"
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -371,36 +419,15 @@ export default function InvoicePreview({
                 border: `1px solid ${tpl.totalsBorder}`,
               }}
             >
-              <span style={{ fontSize: "12px", fontWeight: 800, letterSpacing: "0.5px", color: tpl.totalsColor, textTransform: "uppercase" }}>
-                {t.netToPay || "Reste à payer"}
+              <span style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.5px", color: tpl.totalsColor, textTransform: "uppercase" }}>
+                {t.totalTTC}
               </span>
               <span style={{ fontSize: "17px", fontWeight: 800, color: tpl.totalsAmountColor }}>
-                <Ltr>{formatMoney(netToPay, currency, lang)}</Ltr>
+                <Ltr>{formatMoney(total, currency, lang)}</Ltr>
               </span>
             </div>
-          </>
-        ) : (
-          <div
-            data-testid="preview-total-ttc"
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginTop: "8px",
-              padding: "12px 14px",
-              borderRadius: "8px",
-              background: tpl.totalsBg,
-              border: `1px solid ${tpl.totalsBorder}`,
-            }}
-          >
-            <span style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.5px", color: tpl.totalsColor, textTransform: "uppercase" }}>
-              {t.totalTTC}
-            </span>
-            <span style={{ fontSize: "17px", fontWeight: 800, color: tpl.totalsAmountColor }}>
-              <Ltr>{formatMoney(total, currency, lang)}</Ltr>
-            </span>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* AMOUNT IN WORDS */}
