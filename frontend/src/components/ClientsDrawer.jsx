@@ -167,7 +167,7 @@ export default function ClientsDrawer({
   };
 
   // Soumission du formulaire (Ajout ou Modification)
-  const handleSubmitForm = (e) => {
+  const handleSubmitForm = async (e) => {
     e.preventDefault();
     const trimmedName = (form.name || "").trim();
     if (!trimmedName) {
@@ -178,7 +178,7 @@ export default function ClientsDrawer({
     if (editingClient) {
       // Modification
       if (typeof onUpdateClient === "function") {
-        onUpdateClient(editingClient.id, {
+        await onUpdateClient(editingClient.id, {
           name: trimmedName,
           address: form.address || "",
           phone: form.phone || "",
@@ -193,7 +193,7 @@ export default function ClientsDrawer({
     } else {
       // Ajout
       if (typeof onAddClient === "function") {
-        onAddClient({
+        await onAddClient({
           name: trimmedName,
           address: form.address || "",
           phone: form.phone || "",

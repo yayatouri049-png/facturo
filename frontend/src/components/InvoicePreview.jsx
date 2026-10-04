@@ -82,7 +82,31 @@ export default function InvoicePreview({
     }
   };
 
+  const getRecipientLabel = (type) => {
+    const normalized = (type || "").trim().toLowerCase();
+    if (normalized === "devis" || normalized === "quote") {
+      return t.quoteFor || "DEVIS POUR";
+    }
+    if (
+      normalized === "bon de commande" ||
+      normalized === "bondecommande" ||
+      normalized === "purchase order" ||
+      normalized === "po"
+    ) {
+      return t.supplier || "FOURNISSEUR";
+    }
+    if (
+      normalized === "avoir" ||
+      normalized === "credit note" ||
+      normalized === "creditnote"
+    ) {
+      return t.creditNoteFor || "AVOIR POUR";
+    }
+    return t.billedTo || "FACTURÉ À";
+  };
+
   const resolvedTitle = getResolvedTitle(effectiveDocType, lang);
+  const recipientLabel = getRecipientLabel(effectiveDocType);
   const stampConfig = getStampConfig(effectiveStatus, lang);
 
   const effectiveWordsPrefix =
@@ -221,7 +245,7 @@ export default function InvoicePreview({
           padding: "14px 16px",
         }}
       >
-        <div style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "1.5px", color: gold }}>{t.billedTo}</div>
+        <div data-testid="preview-recipient-label" style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "1.5px", color: gold }}>{recipientLabel}</div>
         <div style={{ fontSize: "13px", fontWeight: 700, color: accent, marginTop: "6px" }}>
           {invoice.client.name || "—"}
         </div>

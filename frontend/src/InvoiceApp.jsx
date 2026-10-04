@@ -606,6 +606,9 @@ export default function InvoiceApp() {
             onPoNumberChange={handlePoNumberChange}
             paymentStatus={paymentStatus}
             onPaymentStatusChange={handlePaymentStatusChange}
+            clients={clients}
+            onAddClient={addClient}
+            onUpdateClient={updateClientInBook}
           />
         </div>
 

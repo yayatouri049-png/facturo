@@ -265,10 +265,11 @@ export function useClients(options = {}) {
    * Ajoute un nouveau client au carnet.
    */
   const addClient = useCallback(
-    (data) => {
+    async (data) => {
       const newClient = createClient(data);
       if (!newClient) return null;
 
+      let nextList = null;
       setClients((prev) => {
         const existsIndex = prev.findIndex((c) => c.id === newClient.id);
         let next;
@@ -278,9 +279,13 @@ export function useClients(options = {}) {
         } else {
           next = [newClient, ...prev];
         }
-        persistClientsData(next);
+        nextList = next;
         return next;
       });
+
+      if (nextList) {
+        await persistClientsData(nextList);
+      }
 
       return newClient;
     },
@@ -291,9 +296,10 @@ export function useClients(options = {}) {
    * Met à jour un client existant.
    */
   const updateClient = useCallback(
-    (id, data) => {
+    async (id, data) => {
       if (!id || !data) return null;
       let updatedResult = null;
+      let nextList = null;
 
       setClients((prev) => {
         const index = prev.findIndex((c) => c.id === id);
@@ -314,9 +320,13 @@ export function useClients(options = {}) {
         updatedResult = validated;
         const next = [...prev];
         next[index] = validated;
-        persistClientsData(next);
+        nextList = next;
         return next;
       });
+
+      if (nextList) {
+        await persistClientsData(nextList);
+      }
 
       return updatedResult;
     },
@@ -327,7 +337,7 @@ export function useClients(options = {}) {
    * Supprime un client après confirmation.
    */
   const deleteClient = useCallback(
-    (id, customConfirmMessage) => {
+    async (id, customConfirmMessage) => {
       if (!id) return false;
       const confirmText =
         customConfirmMessage ||
@@ -340,15 +350,20 @@ export function useClients(options = {}) {
       }
 
       let deleted = false;
+      let nextList = null;
       setClients((prev) => {
         const next = prev.filter((c) => c.id !== id);
         if (next.length !== prev.length) {
           deleted = true;
-          persistClientsData(next);
+          nextList = next;
           return next;
         }
         return prev;
       });
+
+      if (deleted && nextList) {
+        await persistClientsData(nextList);
+      }
 
       return deleted;
     },

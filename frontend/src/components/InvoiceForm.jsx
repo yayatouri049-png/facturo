@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -25,7 +25,6 @@ import {
   ImageOff,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useClients } from "@/hooks/useClients";
 import { formatMoney, lineTotal, computeTotals, plusDaysISO } from "@/lib/invoiceUtils";
 
 const DOC_TYPES = ["Facture", "Devis", "Bon de commande", "Avoir"];
@@ -89,8 +88,12 @@ export default function InvoiceForm({
   onDocTypeChange,
   paymentStatus,
   onPaymentStatusChange,
+  clients: externalClients = [],
+  onAddClient,
+  onUpdateClient,
 }) {
-  const { clients, addClient } = useClients({ t, lang });
+  const clients = Array.isArray(externalClients) ? externalClients : [];
+  const [isSavingClient, setIsSavingClient] = useState(false);
 
   const handleSelectClientFromBook = (clientId) => {
     const selected = clients.find((c) => c.id === clientId);
@@ -110,25 +113,81 @@ export default function InvoiceForm({
     toast.success(t.clientSelected || "Coordonnées du client appliquées");
   };
 
-  const handleSaveClientToBook = () => {
+  const handleSaveClientToBook = async () => {
+    if (isSavingClient) return;
     const rawName = invoice.client?.name;
     const name = typeof rawName === "string" ? rawName.trim() : "";
     if (!name) {
       toast.error(t.clientNameRequired || "Le nom du client est obligatoire.");
       return;
     }
-    const created = addClient({
+
+    const clientData = {
       name,
-      address: invoice.client.address || "",
-      phone: invoice.client.phone || "",
-      email: invoice.client.email || "",
-      nif: invoice.client.nif || "",
-      nis: invoice.client.nis || "",
-      rc: invoice.client.rc || "",
-      ai: invoice.client.ai || "",
+      address: (invoice.client?.address || "").trim(),
+      phone: (invoice.client?.phone || "").trim(),
+      email: (invoice.client?.email || "").trim(),
+      nif: (invoice.client?.nif || "").trim(),
+      nis: (invoice.client?.nis || "").trim(),
+      rc: (invoice.client?.rc || "").trim(),
+      ai: (invoice.client?.ai || "").trim(),
+    };
+
+    // Détection de doublon (client déjà existant par nom insensible à la casse ou par NIF non vide)
+    const existing = clients.find((c) => {
+      if (!c) return false;
+      const nameMatch = (c.name || "").trim().toLowerCase() === name.toLowerCase();
+      const nifMatch =
+        Boolean(clientData.nif) &&
+        Boolean((c.nif || "").trim()) &&
+        (c.nif || "").trim().toLowerCase() === clientData.nif.toLowerCase();
+      return nameMatch || nifMatch;
     });
-    if (created) {
-      toast.success(t.clientSavedToBook || "Client enregistré dans votre carnet");
+
+    setIsSavingClient(true);
+    try {
+      if (existing) {
+        // Vérifier si les coordonnées sont strictement identiques
+        const isIdentical =
+          (existing.name || "").trim().toLowerCase() === clientData.name.toLowerCase() &&
+          (existing.address || "").trim() === clientData.address &&
+          (existing.phone || "").trim() === clientData.phone &&
+          (existing.email || "").trim().toLowerCase() === clientData.email.toLowerCase() &&
+          (existing.nif || "").trim() === clientData.nif &&
+          (existing.nis || "").trim() === clientData.nis &&
+          (existing.rc || "").trim() === clientData.rc &&
+          (existing.ai || "").trim() === clientData.ai;
+
+        if (isIdentical) {
+          toast.info(t.clientAlreadyExists || "Ce client existe déjà dans votre carnet.");
+          return;
+        }
+
+        // Si le client existe déjà avec des coordonnées modifiées, mise à jour de sa fiche
+        if (typeof onUpdateClient === "function") {
+          await onUpdateClient(existing.id, clientData);
+          toast.success(t.clientUpdatedInBook || "Client existant mis à jour dans votre carnet");
+        } else {
+          toast.info(t.clientAlreadyExists || "Ce client existe déjà dans votre carnet.");
+        }
+        return;
+      }
+
+      // Ajout via la même fonction que le carnet (stockage IndexedDB / fichier lié)
+      if (typeof onAddClient === "function") {
+        const created = await onAddClient(clientData);
+        if (created) {
+          toast.success(t.clientSavedToBook || "Client enregistré dans votre carnet");
+        } else {
+          toast.error(t.clientSaveError || "Erreur lors de l'enregistrement du client");
+        }
+      } else {
+        toast.error(t.clientSaveError || "Erreur : fonction d'enregistrement indisponible");
+      }
+    } catch (err) {
+      toast.error(t.clientSaveError || "Erreur lors de l'enregistrement du client");
+    } finally {
+      setIsSavingClient(false);
     }
   };
 
@@ -375,7 +434,8 @@ export default function InvoiceForm({
               variant="ghost"
               size="sm"
               onClick={handleSaveClientToBook}
-              className="h-7 text-xs text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 border border-blue-500/30 rounded-lg px-2.5 flex items-center gap-1.5 transition-colors"
+              disabled={isSavingClient}
+              className="h-7 text-xs text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 border border-blue-500/30 rounded-lg px-2.5 flex items-center gap-1.5 transition-colors disabled:opacity-50"
             >
               <UserPlus className="h-3.5 w-3.5" />
               <span>{t.saveClientToBook || "Enregistrer ce client dans mon carnet"}</span>

@@ -120,21 +120,43 @@ frontend:
         -agent: "testing"
         -comment: "✅ BUG FIX VERIFIED - Comprehensive testing completed with all test amounts (1 000 000, 171 360, 2 000 000 DZD). ARABIC MODE: All numbers display in correct left-to-right order. Total TTC shows '1 000 000,00 دج' (NOT reversed '000 000 1'). Arabic dinar symbol (دج) correctly appears AFTER the number. Verified in all locations: Total TTC, Subtotal HT, VAT, unit prices, line totals, capital in footer (shows '1 000 000 DA'), and amount-in-words block present. No reversed patterns detected. REGRESSION TESTS PASSED: French and English modes display '2 000 000,00 DA' correctly with no issues. The LTR isolation (<bdi dir='ltr'>) and non-breaking spaces (U+00A0) are working perfectly. Screenshots captured for visual confirmation."
 
+  - task: "Ajout du champ NIS (Numéro d'Identification Statistique) émetteur et client avec affichage conditionnel"
+    implemented: true
+    working: true
+    file: "frontend/src/lib/invoiceUtils.js, frontend/src/lib/translations.js, frontend/src/components/InvoiceForm.jsx, frontend/src/components/InvoicePreview.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: "Champ NIS ajouté côté ÉMETTEUR (sauvegardé avec profil) et côté CLIENT (totalement facultatif, aux côtés de NIF, RC et AI). Affichage conditionnel dans l'aperçu/impression/PDF uniquement si renseigné. Traductions: FR 'NIS', EN 'Statistical ID No.', AR 'رقم التعريف الإحصائي'."
+
+  - task: "Correction de l'emplacement du tampon de statut (PAYÉE, EN ATTENTE, ANNULÉE)"
+    implemented: true
+    working: true
+    file: "frontend/src/components/InvoicePreview.jsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: "Déplacement du tampon de statut près du bloc des totaux (à gauche du Total TTC en LTR, à droite en RTL). L'en-tête et le cadre cachet/signature sont complètement dégagés. Aucun montant ni texte n'est recouvert. Style conservé: bordure en tirets/dashed, rotation -6deg, couleurs de statut, opacité 0.96 et pointer-events: none. Si 'Aucun' est sélectionné, rien ne s'affiche. Rendu identique en aperçu, impression et PDF."
+
 metadata:
   created_by: "main_agent"
-  version: "1.1"
-  test_sequence: 1
+  version: "1.8"
+  test_sequence: 8
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Correction ordre bidi RTL des nombres (isolation LTR + espaces insécables)"
+    - "Correction de l'emplacement du tampon de statut (PAYÉE, EN ATTENTE, ANNULÉE)"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
     -agent: "main"
-    -message: "Correctif du bug RTL des nombres appliqué (isolation LTR bdi + NBSP). Merci de tester UNIQUEMENT le frontend en mode ARABE avec devise DZD sur les montants 1 000 000, 171 360,00 et 2 000 000 pour confirmer que l'ordre des chiffres est correct partout (aperçu A4). Vérifier aussi que FR/EN restent inchangés. App 100% frontend, aucune auth, données par défaut chargées automatiquement (localStorage vide)."
-    -agent: "testing"
-    -message: "✅ TESTING COMPLETE - Bug fix verified successfully. All test scenarios passed. Arabic RTL mode: numbers display in correct left-to-right order (1 000 000, 171 360, 2 000 000) with Arabic dinar symbol (دج) after numbers. No reversed patterns detected. French and English modes: no regression, numbers display correctly. All locations verified: Total TTC, Subtotal HT, VAT, unit prices, line totals, capital in footer, amount-in-words. The fix is working perfectly. Ready for main agent to summarize and finish."
+    -message: "Tampon de statut positionné près des totaux à côté du Total TTC (gauche en LTR, droite en RTL), sans recouvrir aucun texte ni montant, avec pointer-events: none."
