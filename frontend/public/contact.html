@@ -3,27 +3,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact - Facturo</title>
+  <title>Contact & Support - Facturo</title>
+  <meta name="description" content="Contactez l'équipe de Facturo : assistance technique, suggestions d'amélioration ou questions relatives à l'utilisation de l'application.">
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #1e293b; background-color: #f8fafc; }
-    .card { background: white; padding: 32px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    h1 { color: #0f172a; margin-top: 0; }
-    a { color: #6366f1; text-decoration: none; font-weight: 500; }
-    a:hover { text-decoration: underline; }
-    ul { padding-left: 20px; }
+    :root {
+      --primary: #6366f1;
+      --bg: #0b0d14;
+      --card-bg: #141826;
+      --card-border: #23283a;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-gold: #d4af37;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.65;
+      max-width: 840px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+      color: var(--text-main);
+      background-color: var(--bg);
+    }
+    a { color: var(--primary); text-decoration: none; font-weight: 500; }
+    a:hover { color: #818cf8; text-decoration: underline; }
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--card-border);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: var(--accent-gold);
+      font-weight: 600;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 36px 32px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    h1 { color: #ffffff; font-size: 26px; margin-top: 0; margin-bottom: 12px; }
+    h2 { color: #ffffff; font-size: 18px; margin-top: 28px; margin-bottom: 10px; border-bottom: 1px solid var(--card-border); padding-bottom: 6px; }
+    p { margin-top: 0; margin-bottom: 14px; color: var(--text-muted); font-size: 14px; }
+    strong { color: #ffffff; }
+    ul { padding-left: 20px; color: var(--text-muted); font-size: 14px; margin-bottom: 16px; }
     li { margin-bottom: 8px; }
+    .contact-box {
+      background: #0d101a;
+      border: 1px solid var(--card-border);
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+    }
+    .contact-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 14px;
+    }
+    .contact-item:last-child { margin-bottom: 0; }
+    .contact-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-gold); font-weight: 600; }
+    .contact-value { font-size: 15px; color: #ffffff; font-weight: 500; }
+    .quick-faq {
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+    .quick-faq h3 { color: #818cf8; font-size: 15px; margin-top: 0; margin-bottom: 8px; }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 13px;
+      color: #64748b;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+    .footer-links { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .footer-links a { color: #94a3b8; }
+    .footer-links a:hover { color: #ffffff; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <p><a href="/">← Retour à Facturo</a></p>
-    <h1>Contactez-nous</h1>
-    <p>Vous avez une question, une remarque ou une suggestion concernant Facturo ? Notre équipe est à votre disposition.</p>
-    <ul>
-      <li><strong>E-mail :</strong> touriyanis02@gmail.com</li>
-      <li><strong>Délai de réponse :</strong> Sous 48 heures ouvrées.</li>
-    </ul>
-    <p>Pour toute question sur la gestion de vos données, reportez-vous à notre <a href="/confidentialite.html">politique de confidentialité</a>.</p>
+  <div class="nav-bar">
+    <a href="/" class="back-link">← Retourner à Facturo</a>
+    <div style="font-size: 13px; color: #64748b;">Facturo • Support & Contact</div>
   </div>
+
+  <div class="card">
+    <h1>Contactez l'équipe Facturo</h1>
+    <p>Une question concernant l'utilisation du logiciel, une suggestion d'amélioration, un partenariat ou le signalement d'un dysfonctionnement ? Nous accordons une attention rigoureuse à chaque message reçu.</p>
+
+    <div class="contact-box">
+      <div class="contact-item">
+        <span class="contact-label">Canal de support par email</span>
+        <span class="contact-value"><a href="mailto:touriyanis02@gmail.com">touriyanis02@gmail.com</a></span>
+      </div>
+      <div class="contact-item">
+        <span class="contact-label">Délai moyen de réponse</span>
+        <span class="contact-value">Sous 24 à 48 heures ouvrées</span>
+      </div>
+      <div class="contact-item">
+        <span class="contact-label">Nature des demandes traitées</span>
+        <span class="contact-value" style="font-size: 13.5px; color: #94a3b8;">
+          Assistance technique, retours d'expérience, demandes d'évolutions, questions relatives à la confidentialité.
+        </span>
+      </div>
+    </div>
+
+    <h2>Recommandations avant de nous contacter</h2>
+    <p>Afin d'obtenir une assistance rapide, voici quelques conseils préalables :</p>
+    <ul>
+      <li><strong>Consultez notre documentation :</strong> La grande majorité des interrogations relatives aux mentions obligatoires, à l'exportation de factures, aux calculs de TVA ou au stockage local sont traitées en détail dans notre <a href="/guide.html">Guide d'utilisation & FAQ</a>.</li>
+      <li><strong>Pour un problème d'impression ou d'affichage :</strong> Pensez à préciser votre système d'exploitation (Windows, macOS, Linux, Android, iOS) et le navigateur utilisé (Chrome, Firefox, Safari, Edge).</li>
+      <li><strong>Vos données privées :</strong> Rappelons que Facturo ne stocke aucune de vos factures sur ses serveurs. Si vous rencontrez un souci de données, nous ne pouvons pas accéder à votre appareil : veillez à vérifier vos sauvegardes JSON.</li>
+    </ul>
+
+    <div class="quick-faq">
+      <h3>Besoin d'une réponse immédiate ?</h3>
+      <p style="margin-bottom: 0;">Rendez-vous sur notre page <a href="/guide.html#faq">Foire Aux Questions</a> pour trouver immédiatement les réponses aux questions les plus courantes des utilisateurs.</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-links">
+      <a href="/">← Éditeur Facturo</a>
+      <span>•</span>
+      <a href="/a-propos.html">À propos</a>
+      <span>•</span>
+      <a href="/confidentialite.html">Confidentialité</a>
+      <span>•</span>
+      <a href="/contact.html" style="color: var(--accent-gold); font-weight: 600;">Contact</a>
+      <span>•</span>
+      <a href="/guide.html">Guide & FAQ</a>
+    </div>
+    <div>© 2026 Facturo • Tous droits réservés.</div>
+  </footer>
 </body>
 </html>

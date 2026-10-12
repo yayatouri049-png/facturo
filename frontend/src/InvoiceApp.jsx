@@ -9,13 +9,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Download, Printer, FilePlus2, RotateCcw, Languages, Save, History, Palette, Users } from "lucide-react";
+import { Download, Printer, FilePlus2, RotateCcw, Languages, Save, History, Palette, Users, BookOpen } from "lucide-react";
 import InvoiceForm from "@/components/InvoiceForm";
 import InvoicePreview from "@/components/InvoicePreview";
 import RewardedAdDialog from "@/components/RewardedAdDialog";
 import { REWARDED_ADS_ENABLED, checkIsPro } from "@/lib/adConfig";
 import InvoiceHistory from "@/components/InvoiceHistory";
 import ClientsDrawer from "@/components/ClientsDrawer";
+import GuideModal from "@/components/GuideModal";
+import EditorialLandingSection from "@/components/EditorialLandingSection";
 import { useClients } from "@/hooks/useClients";
 import { translations, LANGUAGES } from "@/lib/translations";
 import { TEMPLATES, getTemplate } from "@/lib/templates";
@@ -50,6 +52,7 @@ export default function InvoiceApp() {
   const [history, setHistory] = useState(() => loadLS(STORAGE_KEYS.history, []));
   const [historyOpen, setHistoryOpen] = useState(false);
   const [clientsOpen, setClientsOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
 
   const t = translations[lang] || translations.fr;
   const dir = t.dir;
@@ -490,6 +493,16 @@ export default function InvoiceApp() {
             </div>
 
             <Button
+              data-testid="guide-button"
+              onClick={() => setGuideOpen(true)}
+              variant="outline"
+              className="h-9 border-[#282e42] bg-[#141826] text-amber-200 hover:text-white hover:bg-amber-500/10 hover:border-amber-500/50"
+            >
+              <BookOpen className="h-4 w-4 sm:mr-2 text-amber-400" />
+              <span className="hidden sm:inline">{t.guideButton || "Guide"}</span>
+            </Button>
+
+            <Button
               data-testid="clients-drawer-button"
               onClick={() => setClientsOpen(true)}
               variant="outline"
@@ -705,15 +718,33 @@ export default function InvoiceApp() {
         onResolveConflict={resolveConflict}
         onCancelConflict={cancelConflict}
       />
+
+      <GuideModal
+        open={guideOpen}
+        onOpenChange={setGuideOpen}
+        t={t}
+        dir={dir}
+        lang={lang}
+      />
+
+      <EditorialLandingSection
+        t={t}
+        lang={lang}
+        dir={dir}
+        onOpenGuide={() => setGuideOpen(true)}
+      />
+
       {/* Liens légaux AdSense */}
-     <footer className="mt-12 py-6 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col items-center gap-3">
+      <footer className="mt-8 py-6 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col items-center gap-3">
         {globalCount !== null && (
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-400 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span><strong className="text-white font-semibold">{globalCount.toLocaleString()}</strong> {t.invoicesGenerated || "factures générées"}</span>
           </div>
         )}
-        <div className="flex justify-center items-center gap-4">
+        <div className="flex justify-center items-center gap-4 flex-wrap">
+          <a href="/guide.html" className="hover:text-slate-300 transition-colors font-medium text-amber-400/90 hover:text-amber-300">{t.guide || "Guide & FAQ"}</a>
+          <span>•</span>
           <a href="/a-propos.html" className="hover:text-slate-300 transition-colors">{t.about || "À propos"}</a>
           <span>•</span>
           <a href="/confidentialite.html" className="hover:text-slate-300 transition-colors">{t.privacy || "Confidentialité"}</a>

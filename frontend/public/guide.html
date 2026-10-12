@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guide complet de facturation & FAQ - Facturo</title>
+  <meta name="description" content="Guide pratique et tutoriel pas-à-pas pour créer des factures conformes, sécuriser vos données en local et maîtriser les règles comptables sur Facturo.">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --bg: #0b0d14;
+      --card-bg: #141826;
+      --card-border: #23283a;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-gold: #d4af37;
+      --accent-emerald: #10b981;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      line-height: 1.65;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+      color: var(--text-main);
+      background-color: var(--bg);
+    }
+    a { color: var(--primary); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+    a:hover { color: #818cf8; text-decoration: underline; }
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--card-border);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: var(--accent-gold);
+      font-weight: 600;
+    }
+    .back-link:hover { text-decoration: underline; color: #f59e0b; }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 36px 32px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      margin-bottom: 30px;
+    }
+    h1 {
+      color: #ffffff;
+      font-size: 28px;
+      line-height: 1.25;
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+    h2 {
+      color: #ffffff;
+      font-size: 20px;
+      margin-top: 36px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h3 {
+      color: #e2e8f0;
+      font-size: 16px;
+      margin-top: 24px;
+      margin-bottom: 8px;
+    }
+    p { margin-top: 0; margin-bottom: 16px; color: var(--text-muted); }
+    strong { color: #f8fafc; }
+    .toc {
+      background: #0d101a;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 24px 0 32px;
+    }
+    .toc-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-gold);
+      margin-bottom: 12px;
+    }
+    .toc ul {
+      margin: 0;
+      padding-left: 20px;
+      list-style-type: decimal;
+    }
+    .toc li {
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+    .toc li a { color: #94a3b8; }
+    .toc li a:hover { color: #ffffff; }
+    .step-box {
+      background: #0d101a;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .step-num {
+      background: var(--primary);
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      shrink: 0;
+    }
+    .step-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ffffff;
+      margin: 0;
+    }
+    .legal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .legal-card {
+      background: #0d101a;
+      border: 1px solid var(--card-border);
+      padding: 16px;
+      border-radius: 10px;
+      font-size: 13px;
+    }
+    .legal-card strong {
+      display: block;
+      color: #ffffff;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+    .alert-box {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 20px 0;
+      font-size: 13.5px;
+      color: #d1fae5;
+    }
+    .alert-box strong { color: #34d399; }
+    .faq-item {
+      border: 1px solid var(--card-border);
+      background: #0d101a;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+    }
+    .faq-q {
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .faq-q::before {
+      content: "Q.";
+      color: var(--accent-gold);
+      font-weight: 700;
+    }
+    .faq-a {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.6;
+    }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 13px;
+      color: #64748b;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+    .footer-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .footer-links a { color: #94a3b8; }
+    .footer-links a:hover { color: #ffffff; }
+  </style>
+</head>
+<body>
+  <div class="nav-bar">
+    <a href="/" class="back-link">← Retourner à l'éditeur Facturo</a>
+    <div style="font-size: 13px; color: #64748b;">Facturo • Documentation officielle</div>
+  </div>
+
+  <div class="card">
+    <span class="hero-badge">Guide officiel & Bonnes pratiques</span>
+    <h1>Guide d'utilisation & FAQ Facturo</h1>
+    <p>Ce guide exhaustif est conçu pour vous accompagner dans la création de factures professionnelles, devis, bons de commande et avoirs, tout en garantissant la conformité légale et la sécurité absolue de vos données commerciales.</p>
+
+    <div class="toc">
+      <div class="toc-title">Sommaire du guide</div>
+      <ul>
+        <li><a href="#tutoriel">Tutoriel pas à pas : Créer une facture en 5 étapes</a></li>
+        <li><a href="#mentions-legales">Les mentions légales obligatoires (Algérie & International)</a></li>
+        <li><a href="#types-documents">Facture, Devis, Bon de commande, Bon de livraison et Avoir</a></li>
+        <li><a href="#securite-donnees">Sécurité des données & Stockage 100% local (zéro serveur)</a></li>
+        <li><a href="#sauvegardes-json">Gestion des sauvegardes & Mode Fichier Lié</a></li>
+        <li><a href="#faq">Foire Aux Questions (FAQ) & Astuces comptables</a></li>
+      </ul>
+    </div>
+
+    <!-- SECTION 1: TUTORIEL -->
+    <h2 id="tutoriel">1. Tutoriel pas à pas : Créer une facture en 5 étapes</h2>
+    <p>L'interface de Facturo est articulée en deux volets synchronisés en temps réel : le panneau de saisie à gauche et la prévisualisation A4 haute fidélité à droite.</p>
+
+    <div class="step-box">
+      <div class="step-header">
+        <span class="step-num">1</span>
+        <h3 class="step-title">Configurez le profil de votre entreprise (Émetteur)</h3>
+      </div>
+      <p>Commencez par insérer le logo de votre entreprise (format PNG ou JPG). Renseignez votre nom commercial ou raison sociale, adresse, numéro de téléphone et adresse email. N'oubliez pas vos identifiants fiscaux : <strong>NIF, NIS, N° RC, Article d'Imposition (AI)</strong>, ainsi que votre forme juridique et votre capital social. Ces informations sont mémorisées automatiquement dans votre navigateur pour vos prochaines factures.</p>
+    </div>
+
+    <div class="step-box">
+      <div class="step-header">
+        <span class="step-num">2</span>
+        <h3 class="step-title">Sélectionnez ou créez votre client</h3>
+      </div>
+      <p>Saisissez le nom ou l'entreprise de votre client, son adresse et ses coordonnées. Si vous travaillez régulièrement avec ce client, cliquez sur <em>« Enregistrer ce client dans mon carnet »</em> pour le conserver. Pour vos prochaines factures, ouvrez le <strong>Carnet clients</strong> pour charger toutes ses coordonnées en un seul clic.</p>
+    </div>
+
+    <div class="step-box">
+      <div class="step-header">
+        <span class="step-num">3</span>
+        <h3 class="step-title">Définissez les paramètres de la facture</h3>
+      </div>
+      <p>Choisissez le type de document souhaité (Facture, Devis, Bon de commande, Avoir). Indiquez un numéro de facture unique (ex: <code>FAC-2026-001</code>), la date d'émission et la date limite de règlement (échéance). Vous pouvez également rattacher un numéro de Bon de Livraison (BL) ou de Bon de Commande (BC) pour assurer la traçabilité logistique.</p>
+    </div>
+
+    <div class="step-box">
+      <div class="step-header">
+        <span class="step-num">4</span>
+        <h3 class="step-title">Ajoutez les articles, prestations et modalités de règlement</h3>
+      </div>
+      <p>Ajoutez autant de lignes que nécessaire : description détaillée, quantité et prix unitaire hors taxes (HT). Vous pouvez appliquer une remise par ligne ou une remise globale, ainsi que renseigner le taux de TVA applicable. Si le client a déjà versé un acompte, saisissez-le : Facturo calcule instantanément le <strong>Reste à payer</strong>.</p>
+    </div>
+
+    <div class="step-box">
+      <div class="step-header">
+        <span class="step-num">5</span>
+        <h3 class="step-title">Personnalisez le visuel et téléchargez votre PDF</h3>
+      </div>
+      <p>Facturo met à votre disposition 4 modèles graphiques élégants : <em>Violet Royal</em>, <em>Bleu Océan</em>, <em>Émeraude</em> et <em>Noir & Or</em>. Choisissez votre style dans la barre supérieure, puis cliquez sur <strong>Télécharger PDF</strong> pour obtenir un document prêt à être envoyé par email, ou sur <strong>Imprimer</strong> pour une impression directe format A4.</p>
+    </div>
+
+    <!-- SECTION 2: MENTIONS LÉGALES -->
+    <h2 id="mentions-legales">2. Les mentions légales obligatoires (Algérie & International)</h2>
+    <p>Une facture est un document comptable et juridique ayant valeur de preuve. Pour être valide vis-à-vis de l'administration fiscale et des tribunaux de commerce, elle doit impérativement comporter les éléments suivants :</p>
+
+    <div class="legal-grid">
+      <div class="legal-card">
+        <strong>Identifiants de l'Émetteur</strong>
+        Raison sociale, forme juridique (SARL, EURL, SPA, Auto-entrepreneur), capital social, adresse du siège social, téléphone et email.
+      </div>
+      <div class="legal-card">
+        <strong>Numéros fiscaux & d'enregistrement</strong>
+        En Algérie : Numéro d'Identification Fiscale (NIF), Numéro d'Identification Statistique (NIS), Registre de Commerce (RC), et Article d'Imposition (AI).
+      </div>
+      <div class="legal-card">
+        <strong>Identité du Client</strong>
+        Nom ou dénomination sociale de l'acheteur, adresse de livraison ou de facturation, et ses identifiants fiscaux (s'il s'agit d'une entreprise).
+      </div>
+      <div class="legal-card">
+        <strong>Numérotation continue & Dates</strong>
+        Numéro séquentiel unique basé sur une suite chronologique ininterrompue, date d'émission de la facture et date d'exigibilité du paiement.
+      </div>
+      <div class="legal-card">
+        <strong>Décomposition financière</strong>
+        Sous-total Hors Taxes (HT), détail des taux de TVA applicables, montant global Toutes Taxes Comprises (TTC), et éventuels acomptes ou remises.
+      </div>
+      <div class="legal-card">
+        <strong>Montant en toutes lettres</strong>
+        Mention indispensable pour la conformité comptable et bancaire : Facturo génère automatiquement la somme en toutes lettres en français, arabe ou anglais.
+      </div>
+    </div>
+
+    <div class="alert-box">
+      <strong>Astuce Facturo :</strong> L'encart de pied de page comprend une zone réservée au <em>Cachet et Signature</em> de l'émetteur ainsi qu'un tampon optionnel de statut (PAYÉE, EN ATTENTE, ANNULÉE) positionné avec soin pour ne jamais recouvrir les montants ni les mentions légales.
+    </div>
+
+    <!-- SECTION 3: TYPES DE DOCUMENTS -->
+    <h2 id="types-documents">3. Facture, Devis, Bon de commande et Avoir</h2>
+    <p>Facturo vous permet d'émettre l'ensemble de vos pièces commerciales en conservant une charte graphique uniforme :</p>
+    <ul>
+      <li><strong>Facture :</strong> Document définitif constatant la créance suite à la livraison d'un bien ou l'exécution d'un service. Rend le paiement exigible.</li>
+      <li><strong>Devis :</strong> Proposition commerciale préalable décrivant les prestations et les tarifs. Devient contractuel dès lors qu'il est contresigné par le client avec la mention « Bon pour accord ».</li>
+      <li><strong>Bon de commande (BC) :</strong> Document émis par le client ou validé par le vendeur actant formellement l'engagement d'achat avant facturation.</li>
+      <li><strong>Facture d'avoir :</strong> Pièce rectificative constatant l'annulation partielle ou totale d'une facture précédente, un retour de marchandise ou un rabais accordé a posteriori.</li>
+    </ul>
+
+    <!-- SECTION 4: SÉCURITÉ DES DONNÉES -->
+    <h2 id="securite-donnees">4. Sécurité des données : Stockage local & Confidentialité absolue</h2>
+    <p>À l'ère où la souveraineté numérique et la confidentialité commerciale sont cruciales, Facturo a été bâti sur un principe fondamental : <strong>l'architecture 100% côté client (Client-Side Only)</strong>.</p>
+    <ul>
+      <li><strong>Zéro serveur de base de données :</strong> Vos données de facturation (tarifs, noms de clients, chiffre d'affaires, marges) ne transitent jamais sur nos serveurs. Tout le traitement est exécuté localement par le moteur JavaScript de votre propre navigateur.</li>
+      <li><strong>Stockage navigateur sécurisé :</strong> Les profils et factures sont conservés dans le bac à sable local de votre navigateur via <code>localStorage</code> et <code>IndexedDB</code>.</li>
+      <li><strong>Absence totale de pistage commercial :</strong> Aucun profilage n'est effectué sur vos habitudes de facturation. Vos données restent votre propriété exclusive.</li>
+    </ul>
+
+    <!-- SECTION 5: SAUVEGARDES JSON -->
+    <h2 id="sauvegardes-json">5. Gestion des sauvegardes & Mode Fichier Lié</h2>
+    <p>Puisque vos données sont conservées localement, Facturo met à votre disposition des mécanismes avancés pour éviter toute perte en cas de changement de machine ou de vidage du cache :</p>
+    <div class="legal-grid">
+      <div class="legal-card">
+        <strong>Exportation JSON en un clic</strong>
+        Depuis le panneau « Historique » ou « Carnet clients », téléchargez une archive JSON horodatée. Ce fichier contient l'intégralité de vos clients et factures.
+      </div>
+      <div class="legal-card">
+        <strong>Restauration & Fusion intelligente</strong>
+        Importez un fichier de sauvegarde à tout moment : Facturo fusionne intelligemment les nouvelles fiches sans écraser vos saisies récentes ni créer de doublons.
+      </div>
+      <div class="legal-card">
+        <strong>Mode Fichier Lié (Disque dur)</strong>
+        Grâce à la <em>File System Access API</em> (navigateurs Chromium), vous pouvez relier directement un fichier <code>clients.json</code> sur votre ordinateur pour un miroir automatique en temps réel.
+      </div>
+      <div class="legal-card">
+        <strong>Réinitialisation sécurisée du profil</strong>
+        Le bouton « Réinitialiser le profil » efface uniquement les données de l'émetteur sans jamais altérer votre historique ni vos fiches clients.
+      </div>
+    </div>
+
+    <!-- SECTION 6: FAQ -->
+    <h2 id="faq">6. Foire Aux Questions (FAQ)</h2>
+
+    <div class="faq-item">
+      <div class="faq-q">Quelle est la différence entre un devis, un bon de commande, une facture et un avoir sur Facturo ?</div>
+      <p class="faq-a">Ces 4 documents structurent chaque étape de la relation commerciale :
+      <br>• <strong>Le Devis :</strong> Proposition chiffrée préalable qui permet au client d'évaluer le coût des prestations ou produits. Il engage le vendeur sur ses tarifs pendant sa durée de validité et devient contractuel dès la signature du client.
+      <br>• <strong>Le Bon de commande (BC) :</strong> Document émis ou validé par le client confirmant formellement l'ordre d'achat. Il déclenche la préparation ou la réalisation de la prestation.
+      <br>• <strong>La Facture :</strong> Pièce comptable définitive et légale constatant l'exécution de la vente. Elle rend le paiement obligatoire et sert de support pour les déclarations fiscales et de TVA.
+      <br>• <strong>L'Avoir :</strong> Document rectificatif permettant d'annuler ou de corriger une facture existante (en cas de retour marchandise, erreur de prix ou remise accordée a posteriori) dans le respect strict des règles comptables.</p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">À quoi sert un avoir et comment en éditer un sur Facturo ?</div>
+      <p class="faq-a">D'un point de vue légal et fiscal, il est strictement interdit de supprimer ou de modifier une facture déjà émise et numérotée. L'Avoir (ou facture d'avoir) est la seule méthode légale pour constater une annulation partielle ou totale, un retour de marchandise ou accorder un geste commercial.
+      <br>Pour éditer un avoir sur Facturo : sélectionnez simplement <strong>Avoir</strong> dans le champ <em>Type de document</em>. Indiquez le numéro de l'avoir et référencez le numéro de la facture initiale. Saisissez les lignes d'articles à créditer : l'en-tête « AVOIR » s'affiche clairement et le document PDF généré respecte les normes comptables en vigueur.</p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Comment fonctionne le stockage local des données (IndexedDB) pour garantir la confidentialité ?</div>
+      <p class="faq-a">Facturo fonctionne selon une architecture 100% côté client (Client-Side Only). Vos coordonnées, votre logo, vos tarifs, vos fiches clients et vos factures sont enregistrés exclusivement dans les bases de données sécurisées de votre navigateur (via <code>localStorage</code> et <code>IndexedDB</code>).
+      <br>Aucune donnée commerciale n'est envoyée ni stockée sur nos serveurs. Vous bénéficiez ainsi d'une confidentialité totale pour vos secrets d'affaires et vos transactions clients.</p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Comment sauvegarder ou restaurer ses documents au format JSON ?</div>
+      <p class="faq-a">Vous gardez le contrôle total sur vos données grâce aux fonctions d'export et d'import :
+      <br>• <strong>Sauvegarde :</strong> Dans le tiroir <em>Carnet clients</em> ou <em>Historique</em>, cliquez sur le bouton <strong>Exporter</strong>. Un fichier JSON horodaté est immédiatement téléchargé sur votre disque dur.
+      <br>• <strong>Restauration :</strong> Sur un nouvel ordinateur ou après réinstallation de votre navigateur, cliquez sur <strong>Importer</strong> et sélectionnez votre fichier JSON : Facturo restaure et fusionne instantanément l'ensemble de vos données sans créer de doublons.</p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Quelles sont les mentions légales obligatoires à respecter sur ses documents commerciaux ?</div>
+      <p class="faq-a">Pour être juridiquement et fiscalement conforme, tout document commercial doit comporter :
+      <br>1. <strong>Identité complète de l'émetteur :</strong> Raison sociale, adresse, forme juridique (SARL, EURL, Auto-entrepreneur...), capital social, coordonnées de contact.
+      <br>2. <strong>Identifiants fiscaux légaux :</strong> Notamment en Algérie : NIF, NIS, Registre de Commerce (RC) et Article d'Imposition (AI).
+      <br>3. <strong>Coordonnées du client :</strong> Nom complet / société, adresse et identifiants fiscaux éventuels.
+      <br>4. <strong>Numéro et dates :</strong> Numérotation séquentielle chronologique continue, date d'émission et date d'échéance.
+      <br>5. <strong>Ventilation financière :</strong> Total HT, taux et montants de TVA applicables, Total TTC, acompte éventuel et montant en toutes lettres.</p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Comment gérer un acompte reçu et faire apparaître le solde restant dû ?</div>
+      <p class="faq-a">Rendez-vous dans la section « Taxes & Remises » du formulaire, et indiquez le montant de l'acompte dans le champ <em>Acompte versé</em>. L'application calcule automatiquement le « Total TTC », soustrait l'acompte et affiche en grand le <strong>Reste à payer</strong> sur le document final.</p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Comment fonctionne la prise en charge du Dinar Algérien (DZD) et de la langue arabe ?</div>
+      <p class="faq-a">Facturo prend en charge le Dinar Algérien (DZD), l'Euro (EUR) et le Dollar (USD). Lorsque vous activez la langue arabe (العربية), l'interface et le document passent en mode RTL (de droite à gauche), et le DZD s'affiche avec son symbole authentique localisé <strong>دج</strong>. Pour respecter les règles comptables, une isolation bidirectionnelle (LTR) est appliquée pour que les montants numériques s'affichent strictement dans le bon ordre mathématique de gauche à droite.</p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Comment obtenir une impression nette sans marges superflues ?</div>
+      <p class="faq-a">Le gabarit de Facturo est rigoureusement calibré sur les dimensions 210 × 297 mm (A4). Lors de l'impression via le bouton <em>Imprimer</em>, assurez-vous dans les options de votre navigateur de sélectionner la taille A4, d'activer l'option « Graphiques d'arrière-plan », et de décocher « En-têtes et pieds de page ».</p>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">L'utilisation de Facturo est-elle entièrement gratuite ?</div>
+      <p class="faq-a">Oui, Facturo est un outil mis à disposition gratuitement, sans abonnement et sans obligation d'inscription. Vous pouvez créer, dupliquer, archiver et imprimer autant de factures que nécessaire en toute liberté.</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-links">
+      <a href="/">← Éditeur Facturo</a>
+      <span>•</span>
+      <a href="/a-propos.html">À propos</a>
+      <span>•</span>
+      <a href="/confidentialite.html">Confidentialité</a>
+      <span>•</span>
+      <a href="/contact.html">Contact</a>
+      <span>•</span>
+      <a href="/guide.html" style="color: var(--accent-gold); font-weight: 600;">Guide & FAQ</a>
+    </div>
+    <div>© 2026 Facturo • Tous droits réservés. Vos factures professionnelles en toute simplicité.</div>
+  </footer>
+</body>
+</html>

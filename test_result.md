@@ -142,21 +142,31 @@ frontend:
     status_history:
         -working: true
         -agent: "main"
-        -comment: "Déplacement du tampon de statut près du bloc des totaux (à gauche du Total TTC en LTR, à droite en RTL). L'en-tête et le cadre cachet/signature sont complètement dégagés. Aucun montant ni texte n'est recouvert. Style conservé: bordure en tirets/dashed, rotation -6deg, couleurs de statut, opacité 0.96 et pointer-events: none. Si 'Aucun' est sélectionné, rien ne s'affiche. Rendu identique en aperçu, impression et PDF."
+  - task: "Contenu éditorial AdSense, présentation des 4 documents (devis, bons de commande, factures, avoirs), mini-guide interactif et section FAQ"
+    implemented: true
+    working: true
+    file: "frontend/src/components/EditorialLandingSection.jsx, frontend/src/components/GuideModal.jsx, frontend/public/guide.html, frontend/src/InvoiceApp.jsx, frontend/public/a-propos.html, frontend/public/confidentialite.html, frontend/public/contact.html"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: true
+        -agent: "main"
+        -comment: "1) Présentation enrichie intégrée sous l'éditeur détaillant Facturo et les 4 documents commerciaux indispensables (Devis, Bons de commande, Factures, Avoirs). 2) Mini-guide / tutoriel en 4 étapes pour créer et exporter des documents. 3) Section FAQ complète avec les 5 questions obligatoires (différence entre les 4 documents, utilité de l'avoir, stockage local IndexedDB/confidentialité, sauvegarde/restauration JSON, mentions légales). 4) Page web statique autonome enrichie public/guide.html avec liens footer et enrichissement contextuel de a-propos.html, confidentialite.html et contact.html. 5) Modale GuideModal interactive avec support trilingue (FR, AR RTL, EN)."
 
 metadata:
   created_by: "main_agent"
-  version: "1.8"
-  test_sequence: 8
+  version: "1.9"
+  test_sequence: 9
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Correction de l'emplacement du tampon de statut (PAYÉE, EN ATTENTE, ANNULÉE)"
+    - "Contenu éditorial AdSense, présentation des 4 documents (devis, bons de commande, factures, avoirs), mini-guide interactif et section FAQ"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
     -agent: "main"
-    -message: "Tampon de statut positionné près des totaux à côté du Total TTC (gauche en LTR, droite en RTL), sans recouvrir aucun texte ni montant, avec pointer-events: none."
+    -message: "Ajout réussi du contenu éditorial pour AdSense et les utilisateurs : EditorialLandingSection, GuideModal, guide.html, FAQ à 5 questions, présentation des 4 documents commerciaux, sans aucun git commit ni push selon la consigne."

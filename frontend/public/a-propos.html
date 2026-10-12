@@ -3,22 +3,150 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>À propos - Facturo</title>
+  <title>À propos de Facturo - Générateur de factures en ligne</title>
+  <meta name="description" content="Découvrez Facturo : notre mission, nos engagements de confidentialité 100% locale et nos fonctionnalités pour la facturation des indépendants et entreprises.">
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #1e293b; background-color: #f8fafc; }
-    .card { background: white; padding: 32px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    h1 { color: #0f172a; margin-top: 0; }
-    a { color: #6366f1; text-decoration: none; font-weight: 500; }
-    a:hover { text-decoration: underline; }
+    :root {
+      --primary: #6366f1;
+      --bg: #0b0d14;
+      --card-bg: #141826;
+      --card-border: #23283a;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-gold: #d4af37;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.65;
+      max-width: 840px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+      color: var(--text-main);
+      background-color: var(--bg);
+    }
+    a { color: var(--primary); text-decoration: none; font-weight: 500; }
+    a:hover { color: #818cf8; text-decoration: underline; }
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--card-border);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: var(--accent-gold);
+      font-weight: 600;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 36px 32px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    h1 { color: #ffffff; font-size: 26px; margin-top: 0; margin-bottom: 12px; }
+    h2 { color: #ffffff; font-size: 18px; margin-top: 28px; margin-bottom: 10px; border-bottom: 1px solid var(--card-border); padding-bottom: 6px; }
+    p { margin-top: 0; margin-bottom: 14px; color: var(--text-muted); font-size: 14px; }
+    strong { color: #ffffff; }
+    ul { padding-left: 20px; color: var(--text-muted); font-size: 14px; margin-bottom: 16px; }
+    li { margin-bottom: 8px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .feature-box {
+      background: #0d101a;
+      border: 1px solid var(--card-border);
+      padding: 16px;
+      border-radius: 10px;
+    }
+    .feature-box strong { display: block; color: #ffffff; margin-bottom: 4px; font-size: 14px; }
+    .feature-box span { font-size: 13px; color: var(--text-muted); }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 13px;
+      color: #64748b;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+    .footer-links { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .footer-links a { color: #94a3b8; }
+    .footer-links a:hover { color: #ffffff; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <p><a href="/">← Retour à Facturo</a></p>
-    <h1>À propos de Facturo</h1>
-    <p><strong>Facturo</strong> est une application web gratuite conçue pour permettre aux entrepreneurs, indépendants, artisans et petites entreprises d'éditer des factures claires, professionnelles et conformes en quelques clics.</p>
-    <p>Notre mission est de rendre la facturation accessible et sans friction, sans nécessiter d'installation lourde ni d'abonnement payant pour les besoins essentiels.</p>
-    <p>Facturo privilégie la confidentialité et la simplicité : la saisie et le stockage des données se font directement au sein de votre navigateur.</p>
+  <div class="nav-bar">
+    <a href="/" class="back-link">← Retourner à Facturo</a>
+    <div style="font-size: 13px; color: #64748b;">Facturo • À propos</div>
   </div>
+
+  <div class="card">
+    <h1>À propos de Facturo</h1>
+    <p><strong>Facturo</strong> est une application web moderne et gratuite dédiée à la création instantanée de factures, devis, bons de commande et avoirs professionnels de haute précision.</p>
+
+    <h2>Notre Mission</h2>
+    <p>La gestion administrative et la facturation ne devraient jamais représenter un fardeau chronophage ni imposer des abonnements mensuels coûteux pour les artisans, freelances, consultants, commerçants et TPE. Notre mission est d'offrir une solution sans friction, élégante, complète et immédiatement opérationnelle sans nécessiter la création d'un compte.</p>
+
+    <h2>Ce qui rend Facturo unique</h2>
+    <div class="grid">
+      <div class="feature-box">
+        <strong>100% Client-Side & Confidentiel</strong>
+        <span>Vos devis, factures, tarifs et coordonnées clients restent sur votre machine. Aucun serveur ne stocke vos données commerciales.</span>
+      </div>
+      <div class="feature-box">
+        <strong>Conformité fiscale & Mentions légales</strong>
+        <span>Prise en charge intégrale des mentions obligatoires algériennes (NIF, NIS, RC, AI) et internationales, avec calcul automatique du montant en toutes lettres.</span>
+      </div>
+      <div class="feature-box">
+        <strong>Multi-devises & Trilingue (RTL)</strong>
+        <span>Édition en Dinar algérien (DZD دج), Euro (€) et Dollar ($), en français, arabe avec support bidi parfait, et anglais.</span>
+      </div>
+      <div class="feature-box">
+        <strong>Carnet clients & Sauvegardes JSON</strong>
+        <span>Gérez votre fichier clients, synchronisez un fichier sur votre disque dur ou exportez des sauvegardes en un clic.</span>
+      </div>
+    </div>
+
+    <h2>À qui s'adresse Facturo ?</h2>
+    <p>Facturo est conçu pour répondre aux besoins réels du terrain :</p>
+    <ul>
+      <li><strong>Entrepreneurs et freelances :</strong> pour éditer un devis ou une facture en 2 minutes chrono et l'envoyer au format PDF.</li>
+      <li><strong>PME et TPE :</strong> pour disposer d'un outil fiable, léger et standardisé garantissant la conformité comptable.</li>
+      <li><strong>Commerçants et prestataires :</strong> pour gérer les acomptes versés, le solde restant à payer et archiver l'historique de vente.</li>
+    </ul>
+
+    <h2>Transparence et modèle économique</h2>
+    <p>Facturo est entièrement gratuit d'accès pour les utilisateurs. Afin de financer les coûts d'hébergement, de maintenance et d'amélioration continue, l'application s'appuie sur des partenariats publicitaires non intrusifs (notamment Google AdSense). Nous veillons scrupuleusement à ce que l'expérience utilisateur demeure fluide, rapide et respectueuse de votre travail.</p>
+
+    <p>Pour en savoir plus sur les bonnes pratiques de facturation, consultez notre <a href="/guide.html">Guide complet & FAQ</a>.</p>
+  </div>
+
+  <footer>
+    <div class="footer-links">
+      <a href="/">← Éditeur Facturo</a>
+      <span>•</span>
+      <a href="/a-propos.html" style="color: var(--accent-gold); font-weight: 600;">À propos</a>
+      <span>•</span>
+      <a href="/confidentialite.html">Confidentialité</a>
+      <span>•</span>
+      <a href="/contact.html">Contact</a>
+      <span>•</span>
+      <a href="/guide.html">Guide & FAQ</a>
+    </div>
+    <div>© 2026 Facturo • Tous droits réservés.</div>
+  </footer>
 </body>
 </html>
