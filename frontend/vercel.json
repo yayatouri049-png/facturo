@@ -1,0 +1,10 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/a-propos", "destination": "/a-propos.html" },
+    { "source": "/confidentialite", "destination": "/confidentialite.html" },
+    { "source": "/contact", "destination": "/contact.html" },
+    { "source": "/guide", "destination": "/guide.html" },
+    { "source": "/((?!.*\\..*).*)", "destination": "/index.html" }
+  ]
+}
